@@ -1,7 +1,7 @@
 import sys
 import json
 
-from search.util import print_move, print_boom, print_board
+import search.util
 
 
 def main():
