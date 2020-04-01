@@ -4,8 +4,8 @@ This module contains functions and data types related to the playing of Expendib
 
 from collections import namedtuple
 
-# TODO: create reperesentation of game board. perhaps a 2d array of a struct/object which each 'point/square' storing color and height of the pieces there
-Piece = namedtuple('Piece', 'colour height')
+# create nametuple representing a piece
+Piece = namedtuple('P', 'col h')
 
 def create_board():
     '''A dictionary with (x, y) tuples as keys (x, y in range(8))
@@ -15,27 +15,27 @@ def create_board():
 
 def insert_data_from_JSON(JSON_data):
     """
-    Process json input and return a struct representation of the board
+    Process json input and return a dictionary representation of the board
     """
     board = create_board()
-    # TODO:iterate and insert black pieces
+
+    # fetch black pieces
     black_pieces = JSON_data['black']
 
+    # iterate through provided
     for piece in black_pieces:
-        print(piece)
         x_y = tuple(piece[1:])
         h = piece[0]
-        board[x_y] = "bl" + str(h)
+        board[x_y] = Piece("b", h)
 
-
-    # TODO: iterate and insert white pieces
+    # white pieces
     white_pieces = JSON_data['white']
 
     for piece in white_pieces:
         x_y = tuple(piece[1:])
         h = piece[0]
-        board[x_y] = "wh" + str(h)
+        board[x_y] = Piece("w", h)
 
-    return (board)
+    return board
 
 

@@ -9,3 +9,14 @@ class Node:
         self.left = None
         self.right = None
         self.data = data
+
+def manhat_dist(a, b):
+    #returns the number of cardinal moves a piece would have to make to reach the other piece
+    x1 = a[0]
+    x2 = b[0]
+    y1 = a[1]
+    y2 = b[1]
+
+    dist = (abs(x1-x2)) + (abs(y1-y2))
+
+    return dist
