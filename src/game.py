@@ -3,6 +3,7 @@ This module contains functions and data types related to the playing of Expendib
 """
 
 from collections import namedtuple
+from search import manhat_dist as md
 
 # create nametuple representing a piece
 Piece = namedtuple('P', 'col h')
@@ -38,4 +39,9 @@ def insert_data_from_JSON(JSON_data):
 
     return board
 
+def can_move(board, a, b):
+    if (md(a, b) <= board[a].h) :
+        return True
+    else:
+        return False
 

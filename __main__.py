@@ -11,8 +11,7 @@ def main():
 
     board = g.insert_data_from_JSON(data)
 
-    print(board)
-    u.print_board(board)
+    u.print_board(board, unicode=True)
 
     # TODO: find and print winning action sequence
 
