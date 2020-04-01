@@ -1,17 +1,16 @@
 import sys
 import json
-import os
 
-from util import print_board
-
+import util
+import game
+import search
 
 def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
 
-    print(data)
-    print_board(data)
-
+    board = game.insert_data_from_JSON(data)
+    util.print_board(board)
 
     # TODO: find and print winning action sequence
 
