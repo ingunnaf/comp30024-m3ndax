@@ -127,3 +127,31 @@ def move_token(n, a, b, board) :
         
     #done
     return board
+
+def valid_boom(a, board) :
+
+    #invalid if a is not on the board
+    if a[0] not in range(8) :
+        return False
+    if a[1] not in range(8) :
+        return False
+
+    #invalid if there is no token at loc a
+    if a not in board :
+        return False
+    
+    #invalid if token at loc a is black
+    if board[a].col == "b" :
+        return False
+
+    #if it passes tests, return true
+    return True
+
+
+def boom(loc, board) :
+
+    if not valid_boom(loc, board) :
+        print("Invalid attempt at boom")
+        return board
+    
+    #how to detect collisions? here it might be useful with some object-oriented code? or not? 
