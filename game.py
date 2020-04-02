@@ -154,34 +154,34 @@ def boom(origin, board) :
         print("Invalid boom")
         return board
     
-    #stores all the tokens that will be boomed
+    #stores coordinate-tuples of tokens that will be boomed
     booms = [] 
     booms.append(origin)
 
     while len(booms) > 0 :
 
-        # update values for next token to be boomed(explode)
-        next = booms.pop(booms[-1])
+        # remove next token to be boomed from booms
+        next = booms.pop(-1)
         
-        # coordinates of token to be boomed
-        x = next[0]  
-        y = next[1]
+        # get x and y-coordinates of next to be boomed
+        x = int(next[0])
+        y = int(next[1])
 
-        # sets the range of the boom based on how many tokens are stacked in that location
-        range = board[next].h
-        right_limit = x + range
-        left_limit = x - range
-        up_limit = y + range
-        down_limit = y - range
+        # gets the range of the boom based on how many tokens are stacked in that location
+        range = int(board[next].h)
+        right_limit = int(x + range)
+        left_limit = int(x - range)
+        up_limit = int(y + range)
+        down_limit = int(y - range)
         
         # loops through all coordinates within range of the boom to find new tokens to add to booms
-        for x in range(left_limit, right_limit) :
-            for y in range(down_limit, up_limit) :
+        for i in list(range(left_limit, right_limit)) :
+            for j in list(range(down_limit, up_limit)) :
                 
                 #if token is found within range, add to booms and delete token from the board_dict
-                if (x,y) in board: 
-                    booms.append((x,y))
-                    del board[(x,y)]
+                if ((i,j) in board): 
+                    booms.append((i,j))
+                    del board[(i,j)]
 
     return board
 
