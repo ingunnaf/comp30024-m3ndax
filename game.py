@@ -148,10 +148,40 @@ def valid_boom(a, board) :
     return True
 
 
-def boom(loc, board) :
+def boom(origin, board) :
 
-    if not valid_boom(loc, board) :
-        print("Invalid attempt at boom")
+    if not valid_boom(origin, board) :
+        print("Invalid boom")
         return board
     
-    #how to detect collisions? here it might be useful with some object-oriented code? or not? 
+    #stores all the tokens that will be boomed
+    booms = [] 
+    booms.append(origin)
+
+    while len(booms) > 0 :
+
+        # update values for next token to be boomed(explode)
+        next = booms.pop(booms[-1])
+        
+        # coordinates of token to be boomed
+        x = next[0]  
+        y = next[1]
+
+        # sets the range of the boom based on how many tokens are stacked in that location
+        range = board[next].h
+        right_limit = x + range
+        left_limit = x - range
+        up_limit = y + range
+        down_limit = y - range
+        
+        # loops through all coordinates within range of the boom to find new tokens to add to booms
+        for x in range(left_limit, right_limit) :
+            for y in range(down_limit, up_limit) :
+                
+                #if token is found within range, add to booms and delete token from the board_dict
+                if (x,y) in board: 
+                    booms.append((x,y))
+                    del board[(x,y)]
+
+    return board
+
