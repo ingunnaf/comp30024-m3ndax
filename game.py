@@ -13,6 +13,19 @@ def create_board():
     dict = {}
     return dict
 
+
+def manhat_dist(a, b):
+    #returns the number of cardinal moves a piece would have to make to reach the other piece
+    x1 = a[0]
+    x2 = b[0]
+    y1 = a[1]
+    y2 = b[1]
+
+    dist = (abs(x1-x2)) + (abs(y1-y2))
+
+    return dist
+
+
 def insert_data_from_JSON(JSON_data):
     """
     Process json input and return a dictionary representation of the board
@@ -44,46 +57,46 @@ def valid_move(n, a, b, board) :
     #not valid if move is diagonal
     if (a[0] != b[0]) and (a[1] != b[1]) :
         print("you cannot move diagonally in a single move")
-        return false
+        return False
 
     #not valid if the token at loc a is black
     if board[(a)].col == "b" :
         print("you can't move a black token")
-        return false
+        return False
 
     #not valid if less than n tokens at loc a 
     if board[(a)].h < n :
         print("you can't move more tokens than exist at loc a")
-        return false
+        return False
 
     #not valid if loc b is out of reach
     reach = board[(a)].h
     dist = manhat_dist(a,b)
     if (dist > reach) or (dist > n):
         print("loc b is out of reach")
-        return false
+        return False
 
     #not valid if there is a black token at loc b
     if b in board : 
         if board[b].col == "b" : 
-            return false
+            return False
 
     #invalid if loc a or loc b are not in valid range
     if a[0] not in range(0,8) :
         print("loc a not on board")
-        return false
+        return False
     if a[1] not in range(0,8) :
         print("loc a not on board")
-        return false
+        return False
     if b[0] not in range(0,8) :
         print("loc b not on board")
-        return false
+        return False
     if b[1] not in range(0,8) :
         print("loc b not on board")
-        return false
+        return False
 
     # has passed all the checks, so we return true
-    return true
+    return True
 
 
 def move_token(n, a, b, board) :

@@ -19,7 +19,7 @@ def print_boom(x, y, **kwargs):
     print("BOOM at {}.".format((x, y)), **kwargs)
 
 
-def print_board(board_dict, message="", unicode=False, compact=False, **kwargs):
+def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
     """
     For help with visualisation and debugging: output a board diagram with
     any information you like (tokens, heuristic values, distances, etc.).
