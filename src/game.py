@@ -42,7 +42,7 @@ def insert_data_from_JSON(JSON_data):
 def valid_move(n, a, b, board) : 
 
     #not valid if move is diagonal
-    if (a[0] != b[0]) && (a[1] != b[1]) :
+    if (a[0] != b[0]) and (a[1] != b[1]) :
         print("you cannot move diagonally in a single move")
         return false
 
@@ -65,7 +65,7 @@ def valid_move(n, a, b, board) :
 
     #not valid if there is a black token at loc b
     if b in board : 
-        if board[b].col = "b" : 
+        if board[b].col == "b" : 
             return false
 
     #invalid if loc a or loc b are not in valid range
