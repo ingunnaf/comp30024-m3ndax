@@ -146,6 +146,10 @@ def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
         if xy not in board_dict:
             cells.append("   ")
         else:
-            cells.append(str(board_dict[xy])[:3].center(3))
+            colour = str(board_dict[xy].col)
+            height = str(board_dict[xy].h)
+            piece = (colour + height + "")
+            cells.append(piece[:3].center(3))
+            #cells.append(str(board_dict[xy])[:3].center(3))
     # print it
     print(template.format(message, *cells), **kwargs)

@@ -3,7 +3,7 @@ import json
 
 import util as u
 import game as g
-import search as s
+
 
 def main():
     with open(sys.argv[1]) as file:
