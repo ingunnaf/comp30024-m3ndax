@@ -9,7 +9,7 @@ def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
 
-    board = g.insert_data_from_JSON(data)
+    board = g.insert_data_from_json(data)
 
     u.print_board(board, unicode=True)
 
