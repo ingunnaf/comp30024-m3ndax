@@ -1,7 +1,8 @@
-'''
+"""
 This module contains functions and data types for the creation and searching of a game-state tree.
 These functions are used to find the a winning set of moves
-'''
+"""
+
 
 
 def search(initial_board_configuration) :
@@ -90,6 +91,7 @@ class Node:
     depth of node? -> only needed with certain search strategies
     what move led to this node? -> to help us backtrack what action sequence led to this node """
 
+<<<<<<< HEAD
 
 class Move:
     """ A Move serves as an edge in the search tree and stores information about the move that connects two nodes
@@ -111,8 +113,7 @@ class Move:
 class PriorityQueue: 
 
     def __init__(self, max_size) :
-
-        pass
+        self.max_size = max_size
         #funcs we need to write: 
         # put (enqueue a node)
         # get 
