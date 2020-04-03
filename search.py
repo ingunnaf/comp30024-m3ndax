@@ -48,7 +48,7 @@ def _siftdown(heap, startpos, pos):
 
 
 def compare_depth_nodes(newitem, parent):
-    """ Returns true if newitem has greater depth than the parent node"""
+    """ Returns true if newitem has smaller depth than the parent node"""
     if (newitem.depth < parent. depth) :
         return True
     else :
