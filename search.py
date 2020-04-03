@@ -19,12 +19,15 @@ def search(initial_board_configuration) :
     pq.heappush(origin_node)
 
     while (pq.get_length() > 0) :
-        current = pq.pop()
+        current = pq.heappop()
 
-        pass #continue to generate more nodes, look for a solution node
-
-
-
+        if current.have_won() :
+            # we have found a node in which we have won, now we need to trace back all 
+            # the nodes that led to this one to generate winning action sequence
+            break
+        else: 
+            # generate the children of current node and add to the priorityqueue
+            
 
 
 
@@ -63,13 +66,6 @@ class Node:
 
         # there are no more black pieces on the board, so return True
         return True
-        
-    """ contains:
-    
-    pointer to parent node? does python use pointers?
-    depth of node? -> only needed with certain search strategies
-    what move led to this node? -> to help us backtrack what action sequence led to this node """
-
 
 
 
@@ -124,7 +120,7 @@ class PriorityQueue:
         return len(self.priorityqueue)
 
     #modified method from https://github.com/python/cpython/blob/ba8a2bcebfdb41acafea9a195e45e9d177dc216f/Lib/heapq.py#L140
-    def pop(self) :
+    def heappop(self) :
         """ Returns the next node with smallest depth, maintains the heap """
         lastelt = self.priorityqueue.pop()
         if self.priorityqueue:
@@ -135,7 +131,7 @@ class PriorityQueue:
             returnitem = lastelt
         return returnitem
 
-        
+
     #modified method from https://github.com/python/cpython/blob/ba8a2bcebfdb41acafea9a195e45e9d177dc216f/Lib/heapq.py#L140
     def _siftup(self, pos):
         endpos = len(self.priorityqueue)
