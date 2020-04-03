@@ -5,7 +5,7 @@ This module contains functions and data types related to the playing of Expendib
 from collections import namedtuple
 
 # define static variables
-
+# TODO: find and replace all instances
 BLACK = 'b'
 WHITE = 'w'
 
