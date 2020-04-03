@@ -179,11 +179,11 @@ def boom(origin, board) :
         y = int(next[1])
 
         # gets the range of the boom based on how many tokens are stacked in that location
-        range = int(board[next].h)
-        right_limit = int(x + range)
-        left_limit = int(x - range)
-        up_limit = int(y + range)
-        down_limit = int(y - range)
+        my_range = int(board[next].h)
+        right_limit = int(x + my_range)
+        left_limit = int(x - my_range)
+        up_limit = int(y + my_range)
+        down_limit = int(y - my_range)
         
         # loops through all coordinates within range of the boom to find new tokens to add to booms
         for i in list(range(left_limit, right_limit)) :
