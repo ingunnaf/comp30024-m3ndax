@@ -4,6 +4,11 @@ This module contains functions and data types related to the playing of Expendib
 
 from collections import namedtuple
 
+# define static variables
+
+BLACK = 'b'
+WHITE = 'w'
+
 """
 create namedtuple representing a piece
 where col represent the colour (either 'b' for black or 'w' for white)
@@ -192,15 +197,18 @@ def boom(origin, board) :
     return board
 
 
-def n_of_black_pieces(board):
-
+def n_pieces(board, piece_col):
+    """
+    counts how many pieces of the given colour are on the board
+    """
     coords = [(x, 7 - y) for y in range(8) for x in range(8)]
 
     cnt = 0
 
     for xy in coords:
         if xy in board:
-            if board[xy].col == 'b':
+            if board[xy].col == piece_col:
                 cnt += board[xy].h
 
     return cnt
+

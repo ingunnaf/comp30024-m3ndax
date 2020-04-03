@@ -9,9 +9,10 @@ def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
 
-    board = g.insert_data_from_json(data)
+    my_board = g.insert_data_from_json(data)
 
-    u.print_board(board, unicode=True)
+    g.boom((4, 3), my_board)
+    u.print_board(my_board, unicode=True)
 
     # TODO: find and print winning action sequence
 
