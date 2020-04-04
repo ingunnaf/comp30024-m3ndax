@@ -5,63 +5,12 @@ These functions are used to find the a winning set of moves
 
 import util as u
 
-def search(initial_board_configuration) :
-    """ Takes the initial board configuration as input
-        returns an action sequence that leads to a winning outcome"""
-
-    # create an empty priority queue
-    pq = PriorityQueue()
-
-    #create the first node to be put into the heap, which does not have a parent or a move that led to it
-    origin_node = Node(origin_node, null, null)
-
-    #add origin_node to heap
-    pq.heappush(origin_node)
-
-    while (pq.get_length() > 0) :
-        current = pq.heappop()
-
-        if current.have_won() :
-            # we have found a node in which we have won, now we need to trace back all 
-            # the nodes that led to this one to generate winning action sequence
-            break
-        else: 
-            # generate the children of current node and add to the priorityqueue
-        
-    return [] #return an action sequence that leads to a winnin state
+#from collections import deque AIMA
+#from utils import * AIMA
 
 
 
-def compare_depth_nodes(newitem, parent):
-    """ Returns true if newitem has smaller depth than the parent node"""
-    if (newitem.depth < parent. depth) :
-        return True
-    else :
-        return False
-
-
-
-""" This function needs to be called to update our have_won bool value each time we create a new node"""
-def have_won() :
-
-    # loops through all coordinates on the board
-    for x in range(0,8) :
-         for y in range(0,8) :
-
-            # if a black token is found on board, return False
-            if (x,y) in board : 
-                if board[(x,y)].col == "b" :
-                    return False
-     # there are no more black pieces on the board, so return True
-     return True    
-
-
-
-from collections import deque
-
-from utils import *
-
-
+# AIMA class
 class Problem:
     """The abstract class for a formal problem. You should subclass
     this and implement the methods actions and result, and possibly
@@ -114,7 +63,80 @@ class Problem:
 
 # ______________________________________________________________________________
 
+class Expendibots(Problem) : 
+    """ The problem of playing Expendibots. It is played on a 8*8 board with black and white
+    tiles, and we always play the white player. We are the only ones that get to do actions, the
+    black player is static. A state is represented by a dict with the coordinates on the board as keys
+    and a tuple containing the number of tokens and the colour of the tokens (col, h) as the value."""
 
+    #the below functions are just an example of the way 8-puzzle was implemented as a problem. 
+
+    def __init__(self, initial, goal= None):
+        """ Define goal state and initialize a problem """
+        super().__init__(initial, goal)
+
+
+    def actions(self, state):
+        """ Return the actions that can be executed in the given state.
+        The result would be a list of Actions"""
+
+        possible_actions = []
+
+        white_tokens = []
+
+        #state represents the board game configuration
+
+        #finds all white tokens (tokens that we can move)
+        for key in state :
+            if state[key].col == "w": 
+                white_token = Piece("w", state[key].h)
+                white_tokens.append(white_token)
+
+        return possible_actions
+
+    def result(self, state, action):
+        """ Given state and action, return a new state that is the result of the action.
+        Action is assumed to be a valid action in the state """
+
+        # blank is the index of the blank square
+        blank = self.find_blank_square(state)
+        new_state = list(state)
+
+        delta = {'UP': -3, 'DOWN': 3, 'LEFT': -1, 'RIGHT': 1}
+        neighbor = blank + delta[action]
+        new_state[blank], new_state[neighbor] = new_state[neighbor], new_state[blank]
+
+        return tuple(new_state)
+
+    def goal_test(self, state):
+        """ Given a state, return True if state is a goal state or False, otherwise """
+
+        return state == self.goal
+
+    def check_solvability(self, state):
+        """ Checks if the given state is solvable """
+
+        inversion = 0
+        for i in range(len(state)):
+            for j in range(i + 1, len(state)):
+                if (state[i] > state[j]) and state[i] != 0 and state[j] != 0:
+                    inversion += 1
+
+        return inversion % 2 == 0
+
+    def h(self, node):
+        """ Return the heuristic value for a given state. Default heuristic function used is 
+        h(n) = number of misplaced tiles """
+
+        return sum(s != g for (s, g) in zip(node.state, self.goal))
+
+
+
+
+# ______________________________________________________________________________
+
+
+#AIMA class
 class Node:
     """A node in a search tree. Contains a pointer to the parent (the node
     that this is a successor of) and to the actual state for this node. Note
@@ -182,6 +204,7 @@ class Node:
 
 # ______________________________________________________________________________
 
+#AIMA function
 def recursive_best_first_search(problem, h=None):
     """[Figure 3.26]"""
     h = memoize(h or problem.h, 'h')
@@ -216,3 +239,17 @@ def recursive_best_first_search(problem, h=None):
 
 
 # ______________________________________________________________________________
+
+
+class Action : 
+
+    # actiontype is assumed to be either the constant MOVE or BOOM
+    def __init__(self, action_type, loc_a, loc_b=None):
+        self.action_type = action_type
+        self.loc_a = loc_a
+        
+        #not sure if this is the right syntax
+        if (loc_b) :
+            self.loc_b = loc_b
+
+    

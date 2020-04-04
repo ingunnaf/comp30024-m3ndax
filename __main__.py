@@ -9,13 +9,12 @@ import search as s
 def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
-
-    board = g.insert_data_from_JSON(data)
     
     my_board = g.insert_data_from_json(data)
 
-    #g.boom((4, 3), my_board)
-    u.print_board(my_board, unicode=True)
+    solution = recursive_best_first_search(problem, h=None)
+    
+    # h = heuristic function? i think
 
     # TODO: find and print winning action sequence
 
