@@ -139,62 +139,65 @@ def move_token(n, a, b, board):
     return board
 
 
-def valid_boom(a, board) :
-
-    #invalid if a is not on the board
-    if a[0] not in range(8) :
+def valid_boom_victim(a, board):
+    # invalid if a is not on the board
+    if a[0] not in range(8):
         return False
-    if a[1] not in range(8) :
-        return False
-
-    #invalid if there is no token at loc a
-    if a not in board :
-        return False
-    
-    #invalid if token at loc a is black
-    if board[a].col == "b" :
+    if a[1] not in range(8):
         return False
 
-    #if it passes tests, return true
+    # invalid if there is no token at loc a
+    if a not in board:
+        return False
+
+    # if it passes tests, return true
     return True
 
 
-def boom(origin, board) :
+def valid_boom_move(a, board) :
+    # invalid if a is not on the board
+    if not valid_boom_victim(a, board):
+        return False
 
-    if not valid_boom(origin, board) :
+    # invalid if token at loc a is black
+    if board[a].col == "b" :
+        return False
+
+    # if it passes tests, return true
+    return True
+
+
+def boom(origin, my_board):
+
+    if not valid_boom_victim(origin, my_board):
+        print(origin)
         print("Invalid boom")
-        return board
-    
-    #stores coordinate-tuples of tokens that will be boomed
-    booms = [] 
-    booms.append(origin)
 
-    while len(booms) > 0 :
+    else:
+        x, y = origin[0], origin[1]
+        my_range = my_board[origin].h
 
-        # remove next token to be boomed from booms
-        next = booms.pop(-1)
-        
-        # get x and y-coordinates of next to be boomed
-        x = int(next[0])
-        y = int(next[1])
+        del my_board[origin]
 
-        # gets the range of the boom based on how many tokens are stacked in that location
-        my_range = int(board[next].h)
-        right_limit = int(x + my_range)
-        left_limit = int(x - my_range)
-        up_limit = int(y + my_range)
-        down_limit = int(y - my_range)
-        
-        # loops through all coordinates within range of the boom to find new tokens to add to booms
-        for i in list(range(left_limit, right_limit)) :
-            for j in list(range(down_limit, up_limit)) :
-                
-                #if token is found within range, add to booms and delete token from the board_dict
-                if ((i,j) in board): 
-                    booms.append((i,j))
-                    del board[(i,j)]
+        booms = []
 
-    return board
+        right_limit = x + my_range + 1
+        left_limit = x - my_range
+        up_limit = y + my_range + 1
+        down_limit = y - my_range
+
+        for i in range(left_limit, right_limit):
+            for j in range(down_limit, up_limit):
+                if (i,j) in my_board:
+                    #return boom((i,j), my_board)
+                    booms.append((i, j))
+
+        for boomer in booms:
+            boom(boomer, my_board)
+
+    return my_board
+
+
 
 
 def n_pieces(board, piece_col):
