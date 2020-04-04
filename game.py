@@ -5,7 +5,6 @@ This module contains functions and data types related to the playing of Expendib
 from collections import namedtuple
 
 # define static variables
-# TODO: find and replace all instances
 BLACK = 'b'
 WHITE = 'w'
 
@@ -51,7 +50,7 @@ def insert_data_from_json(json_data):
     for piece in black_pieces:
         x_y = tuple(piece[1:])
         h = piece[0]
-        board[x_y] = Piece("b", h)
+        board[x_y] = Piece(BLACK, h)
 
     # white pieces
     white_pieces = json_data['white']
@@ -59,7 +58,7 @@ def insert_data_from_json(json_data):
     for piece in white_pieces:
         x_y = tuple(piece[1:])
         h = piece[0]
-        board[x_y] = Piece("w", h)
+        board[x_y] = Piece(WHITE, h)
 
     return board
 
@@ -72,7 +71,7 @@ def valid_move(n, a, b, board) :
         return False
 
     # not valid if the token at loc a is black
-    if board[(a)].col == "b" :
+    if board[(a)].col == BLACK :
         print("you can't move a black token")
         return False
 
@@ -90,7 +89,7 @@ def valid_move(n, a, b, board) :
 
     # not valid if there is a black token at loc b
     if b in board : 
-        if board[b].col == "b" : 
+        if board[b].col == BLACK :
             return False
 
     # invalid if loc a or loc b are not in valid range
@@ -160,7 +159,7 @@ def valid_boom_move(a, board) :
         return False
 
     # invalid if token at loc a is black
-    if board[a].col == "b" :
+    if board[a].col == BLACK:
         return False
 
     # if it passes tests, return true
