@@ -100,17 +100,17 @@ class Expendibots(Problem) :
         return possible_actions
 
     
-    def result(self, state, action):
+    def result(self, action):
         """Given state and action, return a new state that is the result of the action.
         Action is assumed to be a valid action in the state """
 
         my_type = action.action_type
 
         if my_type == BOOM :
-            return g.boom(action.loc_a, state)
+            return g.boom(action.loc_a, self.board)
 
         elif my_type == MOVE :
-            return g.move_token(action.n, action.loc_a, action.loc_b, state)
+            return g.move_token(action.n, action.loc_a, action.loc_b, self.board)
 
         else: 
             print("Error in Expendibots Results Function")
