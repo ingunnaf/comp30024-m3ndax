@@ -67,6 +67,10 @@ def insert_data_from_json(json_data):
 
 def valid_move(n, a, b, board) : 
 
+    #not valid if a == b (the token isn't moving)
+    if(a == b) :
+        return False
+
     # not valid if move is diagonal
     if (a[0] != b[0]) and (a[1] != b[1]) :
         print("you cannot move diagonally in a single move")
