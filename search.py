@@ -71,33 +71,31 @@ class Expendibots(Problem) :
         self.goal = goal
 
 
-    def actions(self, state):
+    def actions(self):
         """ Return the actions that can be executed in the given state.
         The result would be a list of Actions"""
 
         possible_actions = []
 
-        for key in state :
+        for key in self.board :
             #for each white token
-            if state[key].col == WHITE:
+            if self.board[key].col == WHITE:
                 
                 #one possible action is to boom the white token
                 boom = Action(BOOM, 1, key, None)
                 possible_actions.append(boom)
 
                 #for 1..n number of tokens to be moved
-                for n in range(1, state[key].h + 1) :
+                for n in range(1, self.board[key].h + 1) :
                     
                     # for each coordinate within range
-                    for x in range(key[0] - state[key].h, key[0] + state[key].h + 1) :
-                        for y in range(key[1] - state[key].h, key[1] + state[key].h + 1) :
+                    for x in range(key[0] - self.board[key].h, key[0] + self.board[key].h + 1) :
+                        for y in range(key[1] - self.board[key].h, key[1] + self.board[key].h + 1) :
                             
                             #if move is valid, add it to the possible_actions
-                            if g.valid_move(n, key, (x,y), state) :
+                            if g.valid_move(n, key, (x,y), self.board) :
                                 possible_actions.append(Action(MOVE, n, key, (x,y)) )
                                 
-                
-       
 
         return possible_actions
 
@@ -255,7 +253,7 @@ def recursive_best_first_search(problem, h=None):
 
     node = Node(problem.initial)
     node.f = h(node)
-    result, bestf = RBFS(problem, node, 1000000000000000000000000)
+    result, bestf = RBFS(problem, node, np.inf)
     return result
 
 
