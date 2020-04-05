@@ -71,51 +71,48 @@ class Expendibots(Problem) :
         self.goal = goal
 
 
-    def actions(self):
+    def actions(self, board):
         """ Return the actions that can be executed in the given state.
         The result would be a list of Actions"""
 
         possible_actions = []
 
-        for key in self.board :
+        for key in board :
             #for each white token
-            if self.board[key].col == WHITE:
+            if board[key].col == WHITE:
                 
                 #one possible action is to boom the white token
                 boom = Action(BOOM, 1, key, None)
                 possible_actions.append(boom)
 
                 #for 1..n number of tokens to be moved
-                for n in range(1, self.board[key].h + 1) :
+                for n in range(1, board[key].h + 1) :
                     
                     # for each coordinate within range
-                    for x in range(key[0] - self.board[key].h, key[0] + self.board[key].h + 1) :
-                        for y in range(key[1] - self.board[key].h, key[1] + self.board[key].h + 1) :
+                    for x in range(key[0] - board[key].h, key[0] + board[key].h + 1) :
+                        for y in range(key[1] - board[key].h, key[1] + board[key].h + 1) :
                             
                             #if move is valid, add it to the possible_actions
-                            if g.valid_move(n, key, (x,y), self.board) :
+                            if g.valid_move(n, key, (x,y), board) :
                                 possible_actions.append(Action(MOVE, n, key, (x,y)) )
                                 
 
         return possible_actions
 
     
-    def result(self, action):
+    def result(self, action, board):
         """Given state and action, return a new state that is the result of the action.
         Action is assumed to be a valid action in the state """
 
         my_type = action.action_type
 
         if my_type == BOOM :
-            return g.boom(action.loc_a, self.board)
+            return g.boom(action.loc_a, board)
 
-        elif my_type == MOVE :
-            return g.move_token(action.n, action.loc_a, action.loc_b, self.board)
+        else:
+            return g.move_token(action.n, action.loc_a, action.loc_b, board)
 
-        else: 
-            print("Error in Expendibots Results Function")
 
-        
 
     def goal_test(self, board):
         """ Given a state of the board, return True if state is a goal state (no remaining black tokens) or False, otherwise """
@@ -128,17 +125,24 @@ class Expendibots(Problem) :
 
     
     def h(self, node):
-        white_counter = 0
+        white_counter = 12
         black_counter = 0
-        # Returns higher number if more white tokens, lower or negative number if there's more black tokens
+
+        """ The search function chooses the node with the smallest heuristic value first. 
+        We want to explore nodes with the minimum number of black tokens first and the highest number of white tokens? 
+        
+        """
+        # h decreases the more white tokens are on the board, and increases the more black tokens are on the board
 
         for key in self.board: 
             if self.board[key].col == BLACK:
                 black_counter += self.board[key].h 
             else:
-                white_counter += self.board[key].h 
+                white_counter -= self.board[key].h 
 
-        return black_counter
+        h = white_counter + black_counter
+
+        return h
 
 
 
@@ -171,19 +175,21 @@ class Node:
         return "<Node {}>".format(self.state)
 
 
-    def __lt__(self, node):
-        pass
-        #return self.state < node.state     this doesn't really make sense for our purposes? 
-
-    def expand(self, problem):
+    
+    def expand(self, problem, board):
         """List the nodes reachable in one step from this node."""
-        return [self.child_node(problem, action)
-                for action in problem.actions(self.state)]
+        children = []
+        for action in problem.actions(board):
+            action.print_action()
+            child = self.child_node(problem, action)
+            children.append(child)
+        return children
+
 
     def child_node(self, problem, action):
-        """[Figure 3.10]"""
-        next_state = problem.result(self.state, action)
-        next_node = Node(next_state, self, action, problem.path_cost(self.path_cost, self.state, action, next_state))
+        """Given a current problem and an action, this func generates the next node and returns that"""
+        next_state = problem.result(action, board)
+        next_node = Node(next_state, self, action, 0)
         return next_node
 
     def solution(self):
@@ -228,7 +234,7 @@ def recursive_best_first_search(problem, h=None):
             return node, 0  # (The second value is immaterial)
         
         #This node isn't the goal, so expand on successors
-        successors = node.expand(problem)
+        successors = node.expand(problem, problem.board)
 
         # if there are no successors, return None
         if len(successors) == 0:
@@ -251,7 +257,7 @@ def recursive_best_first_search(problem, h=None):
             if result is not None:
                 return result, best.f
 
-    node = Node(problem.initial)
+    node = Node(problem.board)
     node.f = h(node)
     result, bestf = RBFS(problem, node, np.inf)
     return result
