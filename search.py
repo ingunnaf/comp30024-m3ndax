@@ -9,6 +9,7 @@ import util as u
 #from utils import * AIMA
 from collections import defaultdict
 from game import Piece, BLACK, WHITE
+import numpy as np
 
 
 
@@ -40,14 +41,7 @@ class Problem:
         raise NotImplementedError
 
     def goal_test(self, state):
-        """Return True if the state is a goal. The default method compares the
-        state to self.goal or checks for state in self.goal if it is a
-        list, as specified in the constructor. Override this method if
-        checking against a single self.goal is not enough."""
-        if isinstance(self.goal, list):
-            return is_in(state, self.goal)
-        else:
-            return state == self.goal
+        return state == self.goal
 
     def path_cost(self, c, state1, action, state2):
         """Return the cost of a solution path that arrives at state2 from
@@ -75,7 +69,7 @@ class Expendibots(Problem) :
 
     def __init__(self, board, goal= None):
         """ Define goal state and initialize a problem """
-        super().__init__(initial, goal)
+        super().__init__(board, goal)
         self.board = board
         self.goal = goal
 
@@ -86,6 +80,7 @@ class Expendibots(Problem) :
 
         possible_actions = []
 
+        #stores tuples of white tokens with (coordinate, #n of tokens stacked)
         white_tokens = []
 
         #state represents the board game configuration
@@ -94,23 +89,24 @@ class Expendibots(Problem) :
         for key in state :
             if state[key].col == WHITE:
                 white_token = Piece(WHITE, state[key].h)
-                white_tokens.append(white_token)
+                white_tokens.append(key, (white_token))
+
+        #need to generate actions we can make based on all the white tokens that exist
+
+        for token in white_tokens :
+            boom = Action(BOOM, token, None)
+            possible.actions.append()
+            (self, action_type, loc_a, loc_b=None):
 
         return possible_actions
 
+    
     def result(self, state, action):
-        """ Given state and action, return a new state that is the result of the action.
+        """Given state and action, return a new state that is the result of the action.
         Action is assumed to be a valid action in the state """
 
-        # blank is the index of the blank square
-        blank = self.find_blank_square(state)
-        new_state = list(state)
-
-        delta = {'UP': -3, 'DOWN': 3, 'LEFT': -1, 'RIGHT': 1}
-        neighbor = blank + delta[action]
-        new_state[blank], new_state[neighbor] = new_state[neighbor], new_state[blank]
-
-        return tuple(new_state)
+        
+        return 1
 
     def goal_test(self, board):
         """ Given a state of the board, return True if state is a goal state (no remaining black tokens) or False, otherwise """
@@ -121,17 +117,7 @@ class Expendibots(Problem) :
 
         return True
 
-    def check_solvability(self, state):
-        """ Checks if the given state is solvable """
-
-        inversion = 0
-        for i in range(len(state)):
-            for j in range(i + 1, len(state)):
-                if (state[i] > state[j]) and state[i] != 0 and state[j] != 0:
-                    inversion += 1
-
-        return inversion % 2 == 0
-
+    
     def h(self, node):
         white_counter = 0
         black_counter = 0
@@ -140,8 +126,8 @@ class Expendibots(Problem) :
         for key in self.board: 
             if self.board[key].col == BLACK:
                 black_counter += 1
-            else: 
-                white_counter += 1
+            else:
+                white_counter += self.board[key].h 
 
         return white_counter - black_counter
 

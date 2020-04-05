@@ -12,9 +12,16 @@ def main():
     
     my_board = g.insert_data_from_json(data)
 
-    solution = recursive_best_first_search(problem, h=None)
-    
+    problem = s.Expendibots(my_board, None)
+
+    solution = s.recursive_best_first_search(problem, problem.h())
     # h = heuristic function? i think
+    
+    """
+    for action in solution :
+        print(action)
+    """
+    
 
     # TODO: find and print winning action sequence
 
