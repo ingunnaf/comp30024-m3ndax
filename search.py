@@ -4,6 +4,11 @@ These functions are used to find the a winning set of moves
 """
 
 import util as u
+import game as g
+from collections import namedtuple
+
+Piece = namedtuple('P', 'col h')
+
 
 #from collections import deque AIMA
 #from utils import * AIMA
@@ -89,7 +94,7 @@ class Expendibots(Problem) :
         #finds all white tokens (tokens that we can move)
         for key in state :
             if state[key].col == "w": 
-                white_token = Piece("w", state[key].h)
+                white_token = g.Piece("w", state[key].h)
                 white_tokens.append(white_token)
 
         return possible_actions
