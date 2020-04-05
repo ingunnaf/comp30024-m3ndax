@@ -73,9 +73,11 @@ class Expendibots(Problem) :
 
     #the below functions are just an example of the way 8-puzzle was implemented as a problem. 
 
-    def __init__(self, initial, goal= None):
+    def __init__(self, board, goal= None):
         """ Define goal state and initialize a problem """
         super().__init__(initial, goal)
+        self.board = board
+        self.goal = goal
 
 
     def actions(self, state):
@@ -110,10 +112,14 @@ class Expendibots(Problem) :
 
         return tuple(new_state)
 
-    def goal_test(self, state):
-        """ Given a state, return True if state is a goal state or False, otherwise """
+    def goal_test(self, board):
+        """ Given a state of the board, return True if state is a goal state (no remaining black tokens) or False, otherwise """
 
-        return state == self.goal
+        for token in board: 
+            if board[token].col == BLACK: 
+                return False
+
+        return True
 
     def check_solvability(self, state):
         """ Checks if the given state is solvable """
@@ -127,10 +133,17 @@ class Expendibots(Problem) :
         return inversion % 2 == 0
 
     def h(self, node):
-        """ Return the heuristic value for a given state. Default heuristic function used is 
-        h(n) = number of misplaced tiles """
+        white_counter = 0
+        black_counter = 0
+        # number of white tokens minus the number of black tokens perhaps? 
 
-        return sum(s != g for (s, g) in zip(node.state, self.goal))
+        for key in self.board: 
+            if self.board[key].col == BLACK:
+                black_counter += 1
+            else: 
+                white_counter += 1
+
+        return white_counter - black_counter
 
 
 
@@ -209,7 +222,7 @@ class Node:
 #AIMA function
 def recursive_best_first_search(problem, h=None):
     """[Figure 3.26]"""
-    h = memoize(h or problem.h, 'h')
+    h = u.memoize(h or problem.h, 'h')
 
     def RBFS(problem, node, flimit):
         if problem.goal_test(node.state):
