@@ -5,7 +5,6 @@ This module contains functions and data types related to the playing of Expendib
 from collections import namedtuple
 
 # define static variables
-# TODO: find and replace all instances
 BLACK = 'b'
 WHITE = 'w'
 BOOM = "boom"
@@ -32,7 +31,7 @@ def create_board():
 def manhat_dist(a, b):
     """returns the number of cardinal moves a piece would have to make to reach the other piece
     """
-    x1 , x2 = a[0], b[0]
+    x1, x2 = a[0], b[0]
     y1, y2 = a[1], b[1]
 
     dist = (abs(x1-x2)) + (abs(y1-y2))
@@ -53,7 +52,7 @@ def insert_data_from_json(json_data):
     for piece in black_pieces:
         x_y = tuple(piece[1:])
         h = piece[0]
-        board[x_y] = Piece("b", h)
+        board[x_y] = Piece(BLACK, h)
 
     # white pieces
     white_pieces = json_data['white']
@@ -61,7 +60,7 @@ def insert_data_from_json(json_data):
     for piece in white_pieces:
         x_y = tuple(piece[1:])
         h = piece[0]
-        board[x_y] = Piece("w", h)
+        board[x_y] = Piece(WHITE, h)
 
     return board
 
@@ -74,7 +73,7 @@ def valid_move(n, a, b, board) :
         return False
 
     # not valid if the token at loc a is black
-    if board[(a)].col == "b" :
+    if board[(a)].col == BLACK :
         print("you can't move a black token")
         return False
 
@@ -92,7 +91,7 @@ def valid_move(n, a, b, board) :
 
     # not valid if there is a black token at loc b
     if b in board : 
-        if board[b].col == "b" : 
+        if board[b].col == BLACK :
             return False
 
     # invalid if loc a or loc b are not in valid range
@@ -156,13 +155,13 @@ def valid_boom_victim(a, board):
     return True
 
 
-def valid_boom_move(a, board) :
+def valid_boom_move(a, board):
     # invalid if a is not on the board
     if not valid_boom_victim(a, board):
         return False
 
     # invalid if token at loc a is black
-    if board[a].col == "b" :
+    if board[a].col == BLACK:
         return False
 
     # if it passes tests, return true
@@ -172,8 +171,7 @@ def valid_boom_move(a, board) :
 def boom(origin, my_board):
 
     if not valid_boom_victim(origin, my_board):
-        print(origin)
-        print("Invalid boom")
+        raise RuntimeError("Invalid Boom")
 
     else:
         x, y = origin[0], origin[1]
@@ -191,15 +189,12 @@ def boom(origin, my_board):
         for i in range(left_limit, right_limit):
             for j in range(down_limit, up_limit):
                 if (i,j) in my_board:
-                    #return boom((i,j), my_board)
                     booms.append((i, j))
 
         for boomer in booms:
             boom(boomer, my_board)
 
     return my_board
-
-
 
 
 def n_pieces(board, piece_col):
