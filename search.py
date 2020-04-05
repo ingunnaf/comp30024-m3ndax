@@ -79,18 +79,24 @@ class Expendibots(Problem) :
 
         for key in state :
             #for each white token
+            print("Key: (" + str(key[0]) + ", " + str(key[1]) + ") \n")
             if state[key].col == WHITE:
+                
                 #one possible action is to boom the white token
-                boom = Action(BOOM, None, key, None)
+                boom = Action(BOOM, 1, key, None)
                 possible_actions.append(boom)
 
-                #now find all the possible movements for the white token in each direction: 
-                for n in range(1, state[key].h) :
-                    for x in range(8) :
-                        for y in range(8) :
+                #for 1..n number of tokens to be moved
+                for n in range(1, state[key].h + 1) :
+                    
+                    # for each coordinate within range
+                    for x in range(key[0] - state[key].h, key[0] + state[key].h + 1) :
+                        for y in range(key[1] - state[key].h, key[1] + state[key].h + 1) :
+                            
                             #if move is valid, add it to the possible_actions
                             if g.valid_move(n, key, (x,y), state) :
                                 possible_actions.append(Action(MOVE, n, key, (x,y)) )
+                                
                 
        
 
