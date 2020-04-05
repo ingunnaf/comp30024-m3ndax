@@ -188,7 +188,7 @@ class Node:
 
     def child_node(self, problem, action):
         """Given a current problem and an action, this func generates the next node and returns that"""
-        next_state = problem.result(action, board)
+        next_state = problem.result(action, problem.board)
         next_node = Node(next_state, self, action, 0)
         return next_node
 
