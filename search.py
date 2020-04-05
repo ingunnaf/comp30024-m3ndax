@@ -79,7 +79,6 @@ class Expendibots(Problem) :
 
         for key in state :
             #for each white token
-            print("Key: (" + str(key[0]) + ", " + str(key[1]) + ") \n")
             if state[key].col == WHITE:
                 
                 #one possible action is to boom the white token
