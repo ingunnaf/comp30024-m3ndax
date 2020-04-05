@@ -135,7 +135,7 @@ class Expendibots(Problem) :
             else:
                 white_counter += self.board[key].h 
 
-        return (white_counter - black_counter)
+        return black_counter
 
 
 
@@ -250,7 +250,7 @@ def recursive_best_first_search(problem, h=None):
 
     node = Node(problem.initial)
     node.f = h(node)
-    result, bestf = RBFS(problem, node, 100000)
+    result, bestf = RBFS(problem, node, 1000000000000000000000000)
     return result
 
 
@@ -267,6 +267,13 @@ class Action :
         self.n = n
         self.loc_b = loc_b
         
+    def print_action(self) :
+        if self.action_type == MOVE :
+            u.print_move(self.n, self.loc_a[0], self.loc_a[1], self.loc_b[0], self.loc_b[1])
+        else: 
+            u.print_boom(self.loc_a[0], self.loc_a[1])
+
+
 
 
 def hash_dict(my_dict):
