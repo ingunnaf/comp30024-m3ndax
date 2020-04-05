@@ -14,16 +14,15 @@ def main():
 
     problem = s.Expendibots(my_board, None)
 
-    solution = s.recursive_best_first_search(problem, h)
-    # need to figure out how to pass in the heuristic function, h in the line above. h is a function in the expendibots class
-    
-    """
-    for action in solution :
-        print(action)
-    """
-    
+    #solution_node is a node where we have won
+    solution_node = s.recursive_best_first_search(problem, None)
 
-    # TODO: find and print winning action sequence
+    #path_nodes is a list of nodes on the path to the solution node
+    path_nodes = solution_node.path()
+
+    for node in path_nodes :
+        print(str(node.action))
+    
 
 
 if __name__ == '__main__':

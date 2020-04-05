@@ -127,7 +127,7 @@ class Expendibots(Problem) :
     def h(self, node):
         white_counter = 0
         black_counter = 0
-        # number of white tokens minus the number of black tokens perhaps? 
+        # Returns higher number if more white tokens, lower or negative number if there's more black tokens
 
         for key in self.board: 
             if self.board[key].col == BLACK:
@@ -135,7 +135,7 @@ class Expendibots(Problem) :
             else:
                 white_counter += self.board[key].h 
 
-        return white_counter - black_counter
+        return (white_counter - black_counter)
 
 
 
@@ -167,8 +167,10 @@ class Node:
     def __repr__(self):
         return "<Node {}>".format(self.state)
 
+
     def __lt__(self, node):
-        return self.state < node.state
+        pass
+        #return self.state < node.state     this doesn't really make sense for our purposes? 
 
     def expand(self, problem):
         """List the nodes reachable in one step from this node."""
@@ -217,13 +219,21 @@ def recursive_best_first_search(problem, h=None):
     h = u.memoize(h or problem.h, 'h')
 
     def RBFS(problem, node, flimit):
+
+        #If a node's state is a goal state, return node
         if problem.goal_test(node.state):
             return node, 0  # (The second value is immaterial)
+        
+        #This node isn't the goal, so expand on successors
         successors = node.expand(problem)
+
+        # if there are no successors, return None
         if len(successors) == 0:
             return None, np.inf
+
+        # for each successor, calculate a heuristic value? 
         for s in successors:
-            s.f = max(s.path_cost + h(s), node.f)
+            s.f = max(h(s), node.f)
         while True:
             # Order by lowest f value
             successors.sort(key=lambda x: x.f)
@@ -240,7 +250,7 @@ def recursive_best_first_search(problem, h=None):
 
     node = Node(problem.initial)
     node.f = h(node)
-    result, bestf = RBFS(problem, node, np.inf)
+    result, bestf = RBFS(problem, node, 100000)
     return result
 
 
