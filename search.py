@@ -7,6 +7,8 @@ import util as u
 
 #from collections import deque AIMA
 #from utils import * AIMA
+from collections import defaultdict
+from game import Piece, BLACK, WHITE
 
 
 
@@ -88,8 +90,8 @@ class Expendibots(Problem) :
 
         #finds all white tokens (tokens that we can move)
         for key in state :
-            if state[key].col == "w": 
-                white_token = Piece("w", state[key].h)
+            if state[key].col == WHITE:
+                white_token = Piece(WHITE, state[key].h)
                 white_tokens.append(white_token)
 
         return possible_actions
@@ -252,4 +254,18 @@ class Action :
         if (loc_b) :
             self.loc_b = loc_b
 
-    
+
+def hash_dict(my_dict):
+    """
+    Uses a frozen set to return a hash of the dictionary
+    :param my_dict: provided dictionary
+    :return: hash
+    """
+    return hash(frozenset(my_dict.items()))
+
+
+def four_recurrences(rec_tracker):
+    if 4 in rec_tracker.values():
+        return True
+    else:
+        return False

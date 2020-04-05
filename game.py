@@ -29,7 +29,7 @@ def create_board():
 def manhat_dist(a, b):
     """returns the number of cardinal moves a piece would have to make to reach the other piece
     """
-    x1 , x2 = a[0], b[0]
+    x1, x2 = a[0], b[0]
     y1, y2 = a[1], b[1]
 
     dist = (abs(x1-x2)) + (abs(y1-y2))
@@ -153,7 +153,7 @@ def valid_boom_victim(a, board):
     return True
 
 
-def valid_boom_move(a, board) :
+def valid_boom_move(a, board):
     # invalid if a is not on the board
     if not valid_boom_victim(a, board):
         return False
@@ -169,8 +169,7 @@ def valid_boom_move(a, board) :
 def boom(origin, my_board):
 
     if not valid_boom_victim(origin, my_board):
-        print(origin)
-        print("Invalid boom")
+        raise RuntimeError("Invalid Boom")
 
     else:
         x, y = origin[0], origin[1]
@@ -188,15 +187,12 @@ def boom(origin, my_board):
         for i in range(left_limit, right_limit):
             for j in range(down_limit, up_limit):
                 if (i,j) in my_board:
-                    #return boom((i,j), my_board)
                     booms.append((i, j))
 
         for boomer in booms:
             boom(boomer, my_board)
 
     return my_board
-
-
 
 
 def n_pieces(board, piece_col):
