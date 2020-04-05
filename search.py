@@ -101,8 +101,18 @@ class Expendibots(Problem) :
         """Given state and action, return a new state that is the result of the action.
         Action is assumed to be a valid action in the state """
 
+        my_type = action.action_type
+
+        if my_type == BOOM :
+            return g.boom(action.loc_a, state)
+
+        elif my_type == MOVE :
+            return g.move_token(action.n, action.loc_a, action.loc_b, state)
+
+        else: 
+            print("Error in Expendibots Results Function")
+
         
-        return 1
 
     def goal_test(self, board):
         """ Given a state of the board, return True if state is a goal state (no remaining black tokens) or False, otherwise """
@@ -244,10 +254,9 @@ class Action :
     def __init__(self, action_type, n, loc_a, loc_b=None):
         self.action_type = action_type
         self.loc_a = loc_a
+        self.n = n
+        self.loc_b = loc_b
         
-        #not sure if this is the right syntax
-        if (loc_b) :
-            self.loc_b = loc_b
 
 
 def hash_dict(my_dict):
