@@ -14,8 +14,8 @@ def main():
 
     problem = s.Expendibots(my_board, None)
 
-    solution = s.recursive_best_first_search(problem, problem.h())
-    # h = heuristic function? i think
+    solution = s.recursive_best_first_search(problem, h)
+    # need to figure out how to pass in the heuristic function, h in the line above. h is a function in the expendibots class
     
     """
     for action in solution :

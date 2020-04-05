@@ -52,10 +52,6 @@ class Problem:
         and action. The default method costs 1 for every step in the path."""
         return c + 1
 
-    def value(self, state):
-        """For optimization problems, each state has a value. Hill Climbing
-        and related algorithms try to maximize this value."""
-        raise NotImplementedError
 
 
 # ______________________________________________________________________________
@@ -82,12 +78,13 @@ class Expendibots(Problem) :
         possible_actions = []
 
         for key in state :
+            #for each white token
             if state[key].col == WHITE:
-                #one possible action is to boom each token
+                #one possible action is to boom the white token
                 boom = Action(BOOM, None, key, None)
                 possible_actions.append(boom)
 
-                #now find all the possible movements for the tokens in each direction: 
+                #now find all the possible movements for the white token in each direction: 
                 for n in range(1, state[key].h) :
                     for x in range(8) :
                         for y in range(8) :
