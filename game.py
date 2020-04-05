@@ -8,6 +8,8 @@ from collections import namedtuple
 # TODO: find and replace all instances
 BLACK = 'b'
 WHITE = 'w'
+BOOM = "boom"
+MOVE = "move"
 
 """
 create namedtuple representing a piece
