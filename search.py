@@ -8,8 +8,9 @@ import util as u
 #from collections import deque AIMA
 #from utils import * AIMA
 from collections import defaultdict
-from game import Piece, BLACK, WHITE
+from game import Piece, BLACK, WHITE, MOVE, BOOM
 import numpy as np
+import game as g
 
 
 
@@ -80,23 +81,21 @@ class Expendibots(Problem) :
 
         possible_actions = []
 
-        #stores tuples of white tokens with (coordinate, #n of tokens stacked)
-        white_tokens = []
-
-        #state represents the board game configuration
-
-        #finds all white tokens (tokens that we can move)
         for key in state :
             if state[key].col == WHITE:
-                white_token = Piece(WHITE, state[key].h)
-                white_tokens.append(key, (white_token))
+                #one possible action is to boom each token
+                boom = Action(BOOM, None, key, None)
+                possible_actions.append(boom)
 
-        #need to generate actions we can make based on all the white tokens that exist
-
-        for token in white_tokens :
-            boom = Action(BOOM, token, None)
-            possible.actions.append()
-            (self, action_type, loc_a, loc_b=None):
+                #now find all the possible movements for the tokens in each direction: 
+                for n in range(1, state[key].h) :
+                    for x in range(8) :
+                        for y in range(8) :
+                            #if move is valid, add it to the possible_actions
+                            if g.valid_move(n, key, (x,y), state) :
+                                possible_actions.append(Action(MOVE, n, key, (x,y)) )
+                
+       
 
         return possible_actions
 
@@ -125,7 +124,7 @@ class Expendibots(Problem) :
 
         for key in self.board: 
             if self.board[key].col == BLACK:
-                black_counter += 1
+                black_counter += self.board[key].h 
             else:
                 white_counter += self.board[key].h 
 
@@ -245,7 +244,7 @@ def recursive_best_first_search(problem, h=None):
 class Action : 
 
     # actiontype is assumed to be either the constant MOVE or BOOM
-    def __init__(self, action_type, loc_a, loc_b=None):
+    def __init__(self, action_type, n, loc_a, loc_b=None):
         self.action_type = action_type
         self.loc_a = loc_a
         
