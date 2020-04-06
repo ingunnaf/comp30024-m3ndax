@@ -70,6 +70,9 @@ class Expendibots(Problem) :
         self.board = board
         self.goal = goal
 
+    def __copy__(self):
+        return Expendibots(self.board, None)
+
 
     def actions(self, board):
         """ Return the actions that can be executed in the given state.
@@ -105,12 +108,13 @@ class Expendibots(Problem) :
         Action is assumed to be a valid action in the state """
 
         my_type = action.action_type
+        local_board = board.copy()
 
         if my_type == BOOM :
-            return g.boom(action.loc_a, board)
+            return g.boom(action.loc_a, local_board)
 
         else:
-            return g.move_token(action.n, action.loc_a, action.loc_b, board)
+            return g.move_token(action.n, action.loc_a, action.loc_b, local_board)
 
 
 
@@ -161,13 +165,14 @@ class Node:
     an explanation of how the f and h values are handled. You will not need to
     subclass this class."""
 
-    def __init__(self, state, parent=None, action=None, path_cost=0):
+    def __init__(self, state, parent=None, action=None, path_cost=0, repeats = 0):
         """Create a search tree Node, derived from a parent by an action."""
         self.state = state
         self.parent = parent
         self.action = action
         self.path_cost = path_cost
         self.depth = 0
+        self.repeats = repeats
         if parent:
             self.depth = parent.depth + 1
 
@@ -226,6 +231,10 @@ class Node:
 def recursive_best_first_search(problem, h=None):
     """[Figure 3.26]"""
     h = u.memoize(h or problem.h, 'h')
+
+    #stores all the nodes that we generate, used to count duplicate states
+    generated_nodes = {}
+
 
     def RBFS(problem, node, flimit):
 
