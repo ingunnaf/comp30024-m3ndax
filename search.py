@@ -235,7 +235,7 @@ class Node:
         # at first finding of an equal node state, return the number of repeats stored in that node
         while node:
             if node.state == this_state :
-                return node.repeats
+                return node.repeats + 1
             node = node.parent
         return 0
 
@@ -267,12 +267,8 @@ def recursive_best_first_search(problem, h=None):
         if problem.goal_test(node.state):
             return node, 0  # (The second value is immaterial)
         successors = node.expand(problem, problem.board)
-
-        # if there are no successors, return None
         if len(successors) == 0:
             return None, np.inf
-
-        # for each successor, calculate a heuristic value? 
         for s in successors:
             if s.repeated_states() == 4 : #remove those that repeat a state four times
                 successors.remove(s)
