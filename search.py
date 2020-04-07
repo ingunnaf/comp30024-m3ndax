@@ -111,11 +111,25 @@ class Expendibots(Problem) :
         local_board = board.copy()
 
         if my_type == BOOM :
-            return g.boom(action.loc_a, local_board)
+            return g.boom(action.loc_a, local_board) #returns a new boomed board
 
         else:
-            return g.move_token(action.n, action.loc_a, action.loc_b, local_board)
+            return g.move_token(action.n, action.loc_a, action.loc_b, local_board) #returns a new moved board
 
+
+    def perform_action(self, action) :
+        """Given state and action, perform action to the state"""
+
+        my_type = action.action_type
+
+        if my_type == BOOM :
+            new_board = g.boom(action.loc_a, self.board)
+            self.board = new_board
+            
+        else:
+            new_board = g.move_token(action.n, action.loc_a, action.loc_b, self.board)
+            self.board = new_board
+            
 
 
     def goal_test(self, board):
@@ -172,7 +186,7 @@ class Node:
         self.action = action
         self.path_cost = path_cost
         self.depth = 0
-        self.repeats = repeats
+        self.repeats = self.repeated_states()#repeats = 0 if this is the first version of this state, repeats = 1 if there are two duplicate nodes
         if parent:
             self.depth = parent.depth + 1
 
@@ -185,7 +199,7 @@ class Node:
         """List the nodes reachable in one step from this node."""
         children = []
         for action in problem.actions(board):
-            action.print_action()
+            action.print_action() #ah so here is where the print statement is! -> it reveals that all the same actions are generated repeatedly
             child = self.child_node(problem, action)
             children.append(child)
         return children
@@ -193,13 +207,14 @@ class Node:
 
     def child_node(self, problem, action):
         """Given a current problem and an action, this func generates the next node and returns that"""
-        next_state = problem.result(action, problem.board)
-        next_node = Node(next_state, self, action, 0)
+        next_state = problem.result(action, problem.board) #generates a new board state
+        next_node = Node(next_state, self, action, 0) #creates a new node
         return next_node
 
     def solution(self):
         """Return the sequence of actions to go from the root to this node."""
         return [node.action for node in self.path()[1:]]
+
 
     def path(self):
         """Return a list of nodes forming the path from the root to this node."""
@@ -208,6 +223,21 @@ class Node:
             path_back.append(node)
             node = node.parent
         return list(reversed(path_back))
+
+    def repeated_states(self):
+        """Return the number of times the state of current node has been repeated previously"""
+        node = self
+        #stores initial state to compare other nodes states to 
+        this_state = self.state
+
+        node = node.parent
+
+        # at first finding of an equal node state, return the number of repeats stored in that node
+        while node:
+            if node.state == this_state :
+                return node.repeats
+            node = node.parent
+        return 0
 
     # We want for a queue of nodes in breadth_first_graph_search or
     # astar_search to have no duplicated states, so we treat nodes
@@ -232,17 +262,10 @@ def recursive_best_first_search(problem, h=None):
     """[Figure 3.26]"""
     h = u.memoize(h or problem.h, 'h')
 
-    #stores all the nodes that we generate, used to count duplicate states
-    generated_nodes = {}
-
 
     def RBFS(problem, node, flimit):
-
-        #If a node's state is a goal state, return node
         if problem.goal_test(node.state):
             return node, 0  # (The second value is immaterial)
-        
-        #This node isn't the goal, so expand on successors
         successors = node.expand(problem, problem.board)
 
         # if there are no successors, return None
@@ -251,15 +274,30 @@ def recursive_best_first_search(problem, h=None):
 
         # for each successor, calculate a heuristic value? 
         for s in successors:
-            s.f = max(h(s), node.f)
+            if s.repeated_states() == 4 : #remove those that repeat a state four times
+                successors.remove(s)
+            s.f = max(s.path_cost + h(s), node.f)
+            print(s.f)
+
         while True:
             # Order by lowest f value
             successors.sort(key=lambda x: x.f)
             best = successors[0]
+            #perform action to board so that the new board is passed to the recurring function
+            action = best.action
+            board = problem.board #current_board
+            if action.action_type == MOVE :
+                board = g.move_token(action.n, action.loc_a, action.loc_b, board)
+            else :
+                board = g.boom(action.loc_a, board)
+            problem = Expendibots(board)
+            
+            print(best.__repr__())
             if best.f > flimit:
                 return None, best.f
             if len(successors) > 1:
                 alternative = successors[1].f
+                print(alternative)
             else:
                 alternative = np.inf
             result, best.f = RBFS(problem, best, min(flimit, alternative))
