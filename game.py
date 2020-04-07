@@ -147,18 +147,22 @@ def move_token(n, a, b, board):
     # done
     return board
 
-
+"""
 def valid_boom_victim(a, board):
     # invalid if a is not on the board
     if a[0] not in range(8):
+        print("a[0] not in range")
         return False
     if a[1] not in range(8):
+        print("a[1] not in range")
         return False
 
     # invalid if there is no token at loc a
     if a not in board:
+        print("loc a not on the board")
         return False
 
+    print("passed valid_boom_victim tests")
     # if it passes tests, return true
     return True
 
@@ -173,21 +177,34 @@ def valid_boom_move(a, board):
         return False
 
     # if it passes tests, return true
+    return True"""
+
+
+def valid_boom(origin, my_board) :
+
+    if origin[0] not in range(0,8) :
+        print("x coordinate not in range")
+        return False
+    if origin[1] not in range(0,8) :
+        print("y coordinate not in range")
+        return False
+    if origin not in my_board:
+        print("origin not on board")
+        return False
+    
     return True
 
-
 def boom(origin, my_board):
+    """ Assumes only white tokens are boomed to begin with"""
 
-    if not valid_boom_victim(origin, my_board):
+    if not valid_boom(origin, my_board):
         raise RuntimeError("Invalid Boom")
 
     else:
         x, y = origin[0], origin[1]
-        my_range = my_board[origin].h
+        my_range = 1
 
         del my_board[origin]
-
-        booms = []
 
         right_limit = x + my_range + 1
         left_limit = x - my_range
@@ -197,10 +214,8 @@ def boom(origin, my_board):
         for i in range(left_limit, right_limit):
             for j in range(down_limit, up_limit):
                 if (i,j) in my_board:
-                    booms.append((i, j))
+                    boom((i,j), my_board)
 
-        for boomer in booms:
-            boom(boomer, my_board)
 
     return my_board
 
