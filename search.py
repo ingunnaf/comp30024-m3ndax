@@ -179,11 +179,12 @@ class Node:
     an explanation of how the f and h values are handled. You will not need to
     subclass this class."""
 
-    def __init__(self, state, parent=None, action=None, path_cost=0, repeats = 0):
+    def __init__(self, state, h=0, parent=None, action=None, path_cost=0, repeats = 0):
         """Create a search tree Node, derived from a parent by an action."""
         self.state = state
         self.parent = parent
         self.action = action
+        self.h = self.heuristic() #heuristic value of the node, not dependent on path, only depends on the # black&white tokens on board
         self.path_cost = path_cost
         self.depth = 0
         self.repeats = self.repeated_states()#repeats = 0 if this is the first version of this state, repeats = 1 if there are two duplicate nodes
@@ -193,7 +194,25 @@ class Node:
     def __repr__(self):
         return "<Node {}>".format(self.state)
 
+    def heuristic(self):
+        white_counter = 12
+        black_counter = 0
 
+        """ The search function chooses the node with the smallest heuristic value first. 
+        We want to explore nodes with the minimum number of black tokens first and the highest number of white tokens? 
+        
+        """
+        # h decreases the more white tokens are on the board, and increases the more black tokens are on the board
+
+        for key in self.state: 
+            if self.state[key].col == BLACK:
+                black_counter += self.state[key].h 
+            else:
+                white_counter -= self.state[key].h 
+
+        h = white_counter + black_counter
+
+        return h
     
     def expand(self, problem, board):
         """List the nodes reachable in one step from this node."""
@@ -208,7 +227,8 @@ class Node:
     def child_node(self, problem, action):
         """Given a current problem and an action, this func generates the next node and returns that"""
         next_state = problem.result(action, problem.board) #generates a new board state
-        next_node = Node(next_state, self, action, 0) #creates a new node
+        h = 0 #not needed
+        next_node = Node(next_state, h, self, action, 0) #creates a new node
         return next_node
 
     def solution(self):
@@ -260,25 +280,27 @@ class Node:
 #AIMA function
 def recursive_best_first_search(problem, h=None):
     """[Figure 3.26]"""
-    h = u.memoize(h or problem.h, 'h')
-
 
     def RBFS(problem, node, flimit):
         if problem.goal_test(node.state):
             return node, 0  # (The second value is immaterial)
         successors = node.expand(problem, problem.board)
         if len(successors) == 0:
-            return None, np.inf
+            return None
+
         for s in successors:
             if s.repeated_states() == 4 : #remove those that repeat a state four times
                 successors.remove(s)
-            s.f = max(s.path_cost + h(s), node.f)
-            print(s.f)
+        
+        #check again if there are any successors left after removing nodes that have 4 repeated states
+        if len(successors) == 0:
+            return None
 
         while True:
-            # Order by lowest f value
-            successors.sort(key=lambda x: x.f)
+            # Order by lowest heuristic value
+            successors.sort(key=lambda node: node.h)
             best = successors[0]
+
             #perform action to board so that the new board is passed to the recurring function
             action = best.action
             board = problem.board #current_board
@@ -289,20 +311,22 @@ def recursive_best_first_search(problem, h=None):
             problem = Expendibots(board)
             
             print(best.__repr__())
-            if best.f > flimit:
-                return None, best.f
+            if best.h > flimit:
+                return None
             if len(successors) > 1:
-                alternative = successors[1].f
+                alternative = successors[1].h
                 print(alternative)
             else:
                 alternative = np.inf
+                print(alternative)
+            #successors.pop(0)
             result, best.f = RBFS(problem, best, min(flimit, alternative))
             if result is not None:
-                return result, best.f
+                return result
 
-    node = Node(problem.board)
-    node.f = h(node)
-    result, bestf = RBFS(problem, node, np.inf)
+    h = 0
+    node = Node(problem.board, h)
+    result = RBFS(problem, node, np.inf)
     return result
 
 
