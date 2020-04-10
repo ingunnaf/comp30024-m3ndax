@@ -172,7 +172,7 @@ def boom_piece(origin, init_board):
 
 
 def boom(origin, my_board):
-    if not valid_boom_victim(origin, my_board):
+    if not valid_boom(origin, my_board):
         raise RuntimeError("Invalid Boom")
 
     else:

@@ -4,6 +4,7 @@ Feel free to use and/or modify them to help you develop your program.
 """
 
 
+
 def print_move(n, x_a, y_a, x_b, y_b, **kwargs):
     """
     Output a move action of n pieces from square (x_a, y_a)
@@ -141,7 +142,7 @@ def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
 # | 0,0 | 1,0 | 2,0 | 3,0 | 4,0 | 5,0 | 6,0 | 7,0 |
 # +-----+-----+-----+-----+-----+-----+-----+-----+"""
     # board the board string
-    coords = [(x,7-y) for y in range(8) for x in range(8)]
+    coords = [(x, 7 - y) for y in range(8) for x in range(8)]
     cells = []
     for xy in coords:
         if xy not in board_dict:
@@ -151,26 +152,7 @@ def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
             height = str(board_dict[xy].h)
             piece = (colour + height + "")
             cells.append(piece[:3].center(3))
-            #cells.append(str(board_dict[xy])[:3].center(3))
+            # cells.append(str(board_dict[xy])[:3].center(3))
     # print it
     print(template.format(message, *cells), **kwargs)
 
-
-def memoize(fn, slot=None, maxsize=32):
-    """Memoize fn: make it remember the computed value for any argument list.
-    If slot is specified, store result in that slot of first argument.
-    If slot is false, use lru_cache for caching the values."""
-    if slot:
-        def memoized_fn(obj, *args):
-            if hasattr(obj, slot):
-                return getattr(obj, slot)
-            else:
-                val = fn(obj, *args)
-                setattr(obj, slot, val)
-                return val
-    else:
-        @functools.lru_cache(maxsize=maxsize)
-        def memoized_fn(*args):
-            return fn(*args)
-
-    return memoized_fn
