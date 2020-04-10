@@ -147,38 +147,6 @@ def move_token(n, a, b, board):
     # done
     return board
 
-"""
-def valid_boom_victim(a, board):
-    # invalid if a is not on the board
-    if a[0] not in range(8):
-        print("a[0] not in range")
-        return False
-    if a[1] not in range(8):
-        print("a[1] not in range")
-        return False
-
-    # invalid if there is no token at loc a
-    if a not in board:
-        print("loc a not on the board")
-        return False
-
-    print("passed valid_boom_victim tests")
-    # if it passes tests, return true
-    return True
-
-
-def valid_boom_move(a, board):
-    # invalid if a is not on the board
-    if not valid_boom_victim(a, board):
-        return False
-
-    # invalid if token at loc a is black
-    if board[a].col == BLACK:
-        return False
-
-    # if it passes tests, return true
-    return True"""
-
 
 def valid_boom(origin, my_board) :
 
@@ -194,17 +162,26 @@ def valid_boom(origin, my_board) :
     
     return True
 
-def boom(origin, my_board):
-    """ Assumes only white tokens are boomed to begin with"""
+def boom_piece(origin, init_board):
+    if not valid_boom(origin, init_board):
+        raise RuntimeError("Invalid Boom Move")
 
-    if not valid_boom(origin, my_board):
+    ret_board = init_board.copy()
+    boom(origin, ret_board)
+    return ret_board
+
+
+def boom(origin, my_board):
+    if not valid_boom_victim(origin, my_board):
         raise RuntimeError("Invalid Boom")
 
     else:
         x, y = origin[0], origin[1]
-        my_range = 1
+        my_range = my_board[origin].h
 
         del my_board[origin]
+
+        booms = []
 
         right_limit = x + my_range + 1
         left_limit = x - my_range
@@ -213,9 +190,11 @@ def boom(origin, my_board):
 
         for i in range(left_limit, right_limit):
             for j in range(down_limit, up_limit):
-                if (i,j) in my_board:
-                    boom((i,j), my_board)
+                if (i, j) in my_board:
+                    booms.append((i, j))
 
+        for boomer in booms:
+            boom(boomer, my_board)
 
     return my_board
 
