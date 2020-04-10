@@ -4,15 +4,8 @@ These functions are used to find the a winning set of moves
 """
 
 import util as u
-
-#from collections import deque AIMA
-#from utils import * AIMA
-from collections import defaultdict, deque
-
-from game import Piece, BLACK, WHITE, MOVE, BOOM
+from game import *
 import numpy as np
-import game as g
-
 
 
 # AIMA class
@@ -54,16 +47,15 @@ class Problem:
         return c + 1
 
 
-
 # ______________________________________________________________________________
 
-class Expendibots(Problem) : 
+class Expendibots(Problem):
     """ The problem of playing Expendibots. It is played on a 8*8 board with black and white
     tiles, and we always play the white player. We are the only ones that get to do actions, the
     black player is static. A state is represented by a dict with the coordinates on the board as keys
     and a tuple containing the number of tokens and the colour of the tokens (col, h) as the value."""
 
-    #the below functions are just an example of the way 8-puzzle was implemented as a problem. 
+    # the below functions are just an example of the way 8-puzzle was implemented as a problem.
 
     def __init__(self, board, goal=None):
         """ Define goal state and initialize a problem """
@@ -74,28 +66,26 @@ class Expendibots(Problem) :
     """def __copy__(self):
         return Expendibots(self.board, None)"""
 
-
     def actions(self, board):
         """ Return the actions that can be executed in the given state.
         The result would be a list of Actions"""
 
         possible_actions = []
 
-        for key in board :
-            #for each white token
+        for key in board:
+            # for each white token
             if board[key].col == WHITE:
-                
-                
-                #one possible action is to boom the white token
+
+                # one possible action is to boom the white token
                 boom = Action(BOOM, 1, key, None)
                 possible_actions.append(boom)
 
-                #for 1..n number of tokens to be moved
-                for n in range(1, board[key].h + 1) :
-                    
+                # for 1..n number of tokens to be moved
+                for n in range(1, board[key].h + 1):
+
                     # for each coordinate within range
-                    for x in range(key[0] - 1, key[0] + 2) :
-                        for y in range(key[1] - 1, key[1] + 2) :
+                    for x in range(key[0] - n , key[0] + n + 1) :
+                        for y in range(key[1] - n, key[1] + n + 1) :
                             
                             #if move is valid, add it to the possible_actions
                             if g.valid_move(n, key, (x,y), board) :
@@ -104,7 +94,6 @@ class Expendibots(Problem) :
 
         return possible_actions
 
-    
     def result(self, action, board):
         """Given state and action, return a new state that is the result of the action.
         Action is assumed to be a valid action in the state """
@@ -112,65 +101,70 @@ class Expendibots(Problem) :
         my_type = action.action_type
         local_board = board.copy()
 
-        if my_type == BOOM :
-            return g.boom(action.loc_a, local_board) #returns a new boomed board
+        if my_type == BOOM:
+            return boom_piece(action.loc_a, local_board)  # returns a new boomed board
 
         else:
-            return g.move_token(action.n, action.loc_a, action.loc_b, local_board) #returns a new moved board
+            return move_token(action.n, action.loc_a, action.loc_b, local_board)  # returns a new moved board
 
+<<<<<<< HEAD
     """
     def perform_action(self, action) :
         #Given state and action, perform action to the state
+=======
+    def perform_action(self, action):
+        """Given state and action, perform action to the state"""
+>>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
 
         my_type = action.action_type
 
-        if my_type == BOOM :
-            new_board = g.boom(action.loc_a, self.board)
+        if my_type == BOOM:
+            new_board = boom_piece(action.loc_a, self.board)
             self.board = new_board
-            
+
         else:
-            new_board = g.move_token(action.n, action.loc_a, action.loc_b, self.board)
+            new_board = move_token(action.n, action.loc_a, action.loc_b, self.board)
             self.board = new_board
+<<<<<<< HEAD
             
     """
+=======
+>>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
 
     def goal_test(self, board):
         """ Given a state of the board, return True if state is a goal state (no remaining black tokens) or False, otherwise """
 
-        for token in board: 
-            if board[token].col == BLACK: 
+        for token in board:
+            if board[token].col == BLACK:
                 return False
 
         return True
 
-    
     def h(self, node):
         white_counter = 12
         black_counter = 0
 
         """ The search function chooses the node with the smallest heuristic value first. 
         We want to explore nodes with the minimum number of black tokens first and the highest number of white tokens? 
-        
+
         """
         # h decreases the more white tokens are on the board, and increases the more black tokens are on the board
 
-        for key in self.board: 
+        for key in self.board:
             if self.board[key].col == BLACK:
-                black_counter += self.board[key].h 
+                black_counter += self.board[key].h
             else:
-                white_counter -= self.board[key].h 
+                white_counter -= self.board[key].h
 
         h = white_counter + black_counter
 
         return h
 
 
-
-
 # ______________________________________________________________________________
 
 
-#AIMA class
+# AIMA class
 class Node:
     """A node in a search tree. Contains a pointer to the parent (the node
     that this is a successor of) and to the actual state for this node. Note
@@ -181,15 +175,24 @@ class Node:
     an explanation of how the f and h values are handled. You will not need to
     subclass this class."""
 
+<<<<<<< HEAD
     def __init__(self, state, h=0, parent=None, action=None, depth = 0, path_cost=0):
+=======
+    def __init__(self, state, h=0, parent=None, action=None, path_cost=0, repeats=0):
+>>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
         """Create a search tree Node, derived from a parent by an action."""
         self.state = state
         self.parent = parent
         self.action = action
-        self.h = self.heuristic() #heuristic value of the node, not dependent on path, only depends on the # black&white tokens on board
+        self.h = self.heuristic()  # heuristic value of the node, not dependent on path, only depends on the # black&white tokens on board
         self.path_cost = path_cost
+<<<<<<< HEAD
         self.repeats = self.repeated_states()#repeats = 0 if this is the first version of this state, repeats = 1 if there are two duplicate nodes
         self.depth = 0
+=======
+        self.depth = 0
+        self.repeats = self.repeated_states()  # repeats = 0 if this is the first version of this state, repeats = 1 if there are two duplicate nodes
+>>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
         if parent:
             self.depth = parent.depth + 1
         
@@ -206,41 +209,39 @@ class Node:
 
         """ The search function chooses the node with the smallest heuristic value first. 
         We want to explore nodes with the minimum number of black tokens first and the highest number of white tokens? 
-        
+
         """
         # h decreases the more white tokens are on the board, and increases the more black tokens are on the board
 
-        for key in self.state: 
+        for key in self.state:
             if self.state[key].col == BLACK:
-                black_counter += self.state[key].h 
+                black_counter += self.state[key].h
             else:
-                white_counter -= self.state[key].h 
+                white_counter -= self.state[key].h
 
         h = white_counter + black_counter
 
         return h
-    
+
     def expand(self, problem, board):
         """List the nodes reachable in one step from this node."""
         children = []
         for action in problem.actions(board):
-            action.print_action() #ah so here is where the print statement is! -> it reveals that all the same actions are generated repeatedly
+            action.print_action()  # ah so here is where the print statement is! -> it reveals that all the same actions are generated repeatedly
             child = self.child_node(problem, action)
             children.append(child)
         return children
 
-
     def child_node(self, problem, action):
         """Given a current problem and an action, this func generates the next node and returns that"""
-        next_state = problem.result(action, problem.board) #generates a new board state
-        h = 0 #not needed
-        next_node = Node(next_state, h, self, action, 0) #creates a new node
+        next_state = problem.result(action, problem.board)  # generates a new board state
+        h = 0  # not needed
+        next_node = Node(next_state, h, self, action, 0)  # creates a new node
         return next_node
 
     def solution(self):
         """Return the sequence of actions to go from the root to this node."""
         return [node.action for node in self.path()[1:]]
-
 
     def path(self):
         """Return a list of nodes forming the path from the root to this node."""
@@ -253,14 +254,18 @@ class Node:
     def repeated_states(self):
         """Return the number of times the state of current node has been repeated previously"""
         node = self
-        #stores initial state to compare other nodes states to 
+        # stores initial state to compare other nodes states to
         this_state = self.state
 
         node = node.parent
 
         # at first finding of an equal node state, return the number of repeats stored in that node
         while node:
+<<<<<<< HEAD
             if dict_equal(node.state,this_state) :
+=======
+            if node.state == this_state:
+>>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
                 return node.repeats + 1
             node = node.parent
         return 0
@@ -283,7 +288,7 @@ class Node:
 
 # ______________________________________________________________________________
 
-#AIMA function
+# AIMA function
 def recursive_best_first_search(problem, h=None):
     """[Figure 3.26]"""
 
@@ -295,6 +300,7 @@ def recursive_best_first_search(problem, h=None):
             return None
 
         for s in successors:
+<<<<<<< HEAD
             s.repeats = s.repeated_states()
             if s.repeats == 2 : #remove those that repeat a state four times
                 print(s.__repr__())
@@ -303,6 +309,12 @@ def recursive_best_first_search(problem, h=None):
             elif s.depth > 250 :
                 successors.remove(s)
         #check again if there are any successors left after removing nodes that have 4 repeated states
+=======
+            if s.repeated_states() == 4:  # remove those that repeat a state four times
+                successors.remove(s)
+
+        # check again if there are any successors left after removing nodes that have 4 repeated states
+>>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
         if len(successors) == 0:
             return None
 
@@ -311,15 +323,15 @@ def recursive_best_first_search(problem, h=None):
             successors.sort(key=lambda node: node.h)
             best = successors[0]
 
-            #perform action to board so that the new board is passed to the recurring function
+            # perform action to board so that the new board is passed to the recurring function
             action = best.action
-            board = problem.board #current_board
-            if action.action_type == MOVE :
-                board = g.move_token(action.n, action.loc_a, action.loc_b, board)
-            else :
-                board = g.boom(action.loc_a, board)
+            board = problem.board  # current_board
+            if action.action_type == MOVE:
+                board = move_token(action.n, action.loc_a, action.loc_b, board)
+            else:
+                board = boom_piece(action.loc_a, board)
             problem = Expendibots(board)
-            
+
             print(best.__repr__())
             if best.h > flimit:
                 return None
@@ -329,8 +341,13 @@ def recursive_best_first_search(problem, h=None):
             else:
                 alternative = np.inf
                 print(alternative)
+<<<<<<< HEAD
             
             result = RBFS(problem, best, min(flimit, alternative))
+=======
+            # successors.pop(0)
+            result, best.f = RBFS(problem, best, min(flimit, alternative))
+>>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
             if result is not None:
                 return result
 
@@ -340,11 +357,10 @@ def recursive_best_first_search(problem, h=None):
     return result
 
 
-
 # ______________________________________________________________________________
 
 
-class Action : 
+class Action:
 
     # actiontype is assumed to be either the constant MOVE or BOOM
     def __init__(self, action_type, n, loc_a, loc_b=None):
@@ -352,14 +368,15 @@ class Action :
         self.loc_a = loc_a
         self.n = n
         self.loc_b = loc_b
-        
-    def print_action(self) :
-        if self.action_type == MOVE :
+
+    def print_action(self):
+        if self.action_type == MOVE:
             u.print_move(self.n, self.loc_a[0], self.loc_a[1], self.loc_b[0], self.loc_b[1])
-        else: 
+        else:
             u.print_boom(self.loc_a[0], self.loc_a[1])
 
 
+<<<<<<< HEAD
 
 
 def dict_equal(dict1, dict2) : 
@@ -383,6 +400,9 @@ def dict_equal(dict1, dict2) :
 
 
 def breadth_first_tree_search(problem):
+=======
+def hash_dict(my_dict):
+>>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
     """
     [Figure 3.7]
     Search the shallowest nodes in the search tree first.
@@ -393,6 +413,7 @@ def breadth_first_tree_search(problem):
 
     frontier = deque([Node(problem.board)])  # FIFO queue
 
+<<<<<<< HEAD
     while frontier:
         node = frontier.popleft()
         print(node.__repr__())
@@ -422,3 +443,10 @@ def breadth_first_tree_search(problem):
 
     print("why can't we find the solution :((( ")
     return None
+=======
+def four_recurrences(rec_tracker):
+    if 4 in rec_tracker.values():
+        return True
+    else:
+        return False
+>>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
