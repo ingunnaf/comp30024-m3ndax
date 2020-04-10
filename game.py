@@ -121,29 +121,30 @@ def valid_move(n, a, b, board):
 
 
 def move_token(n, a, b, board):
+    ret_board = board.copy()
     # check if move is valid
     if not valid_move(n, a, b, board):
         return board
 
     # handle case where there is already a token at loc b (stack new tokens on top)
-    if b in board:
-        current_height_b = board[b].h
+    if b in ret_board:
+        current_height_b = ret_board[b].h
         new_height_b = current_height_b + n
-        board[b] = Piece("w", new_height_b)
+        ret_board[b] = Piece("w", new_height_b)
     else:  # loc b has no tokens yet so we can just put our new tokens there
-        board[b] = Piece("w", n)
+        ret_board[b] = Piece("w", n)
 
     # handle potential remaining tokens at loc a
-    current_height_a = board[a].h
+    current_height_a = ret_board[a].h
     new_height_a = current_height_a - n
     if new_height_a == 0:
         # no more tokens left at loc a
-        del board[a]
+        del ret_board[a]
     else:
-        board[a] = Piece("w", new_height_a)
+        ret_board[a] = Piece("w", new_height_a)
 
     # done
-    return board
+    return ret_board
 
 
 def valid_boom(origin, my_board):
@@ -175,11 +176,9 @@ def boom(origin, my_board):
 
     else:
         x, y = origin[0], origin[1]
-        my_range = my_board[origin].h
+        my_range = 1
 
         del my_board[origin]
-
-        booms = []
 
         right_limit = x + my_range + 1
         left_limit = x - my_range
@@ -189,10 +188,7 @@ def boom(origin, my_board):
         for i in range(left_limit, right_limit):
             for j in range(down_limit, up_limit):
                 if (i, j) in my_board:
-                    booms.append((i, j))
-
-        for boomer in booms:
-            boom(boomer, my_board)
+                    boom((i,j), my_board)
 
     return my_board
 
