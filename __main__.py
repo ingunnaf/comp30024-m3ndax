@@ -1,13 +1,19 @@
 import sys
 import json
 
-from search import *
+import util as u
+import game as g
+import search as s
+from game import Piece, BLACK, WHITE, MOVE, BOOM
+
 
 
 def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
 
+    my_board = g.insert_data_from_json(data)
+    expendibots = s.Expendibots(my_board, None)
     u.print_board(my_board)
 
 
