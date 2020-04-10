@@ -1,11 +1,7 @@
 import sys
 import json
 
-
 from search import *
-
-
-
 
 
 def main():
