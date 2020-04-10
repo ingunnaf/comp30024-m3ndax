@@ -34,7 +34,7 @@ def manhat_dist(a, b):
     x1, x2 = a[0], b[0]
     y1, y2 = a[1], b[1]
 
-    dist = (abs(x1-x2)) + (abs(y1-y2))
+    dist = (abs(x1 - x2)) + (abs(y1 - y2))
 
     return dist
 
@@ -65,56 +65,55 @@ def insert_data_from_json(json_data):
     return board
 
 
-def valid_move(n, a, b, board) : 
-
-    #not valid if there is no token at a
+def valid_move(n, a, b, board):
+    # not valid if there is no token at a
     if a not in board:
         return False
 
-    #not valid if a == b (the token isn't moving)
-    if(a == b) :
+    # not valid if a == b (the token isn't moving)
+    if (a == b):
         return False
 
     # not valid if move is diagonal
-    if (a[0] != b[0]) and (a[1] != b[1]) :
-        #print("you cannot move diagonally in a single move")
+    if (a[0] != b[0]) and (a[1] != b[1]):
+        # print("you cannot move diagonally in a single move")
         return False
 
     # not valid if the token at loc a is black
     if a in board:
-        if board[a].col == BLACK :
-            #print("you can't move a black token")
+        if board[a].col == BLACK:
+            # print("you can't move a black token")
             return False
 
     # not valid if less than n tokens at loc a
-    if board[(a)].h < n :
-        #print("you can't move more tokens than exist at loc a")
+    if board[(a)].h < n:
+        # print("you can't move more tokens than exist at loc a")
         return False
 
     # not valid if loc b is out of reach
     reach = board[(a)].h
-    dist = manhat_dist(a,b)
+    dist = manhat_dist(a, b)
     if (dist > reach) or (dist > n):
-        #print("loc b is out of reach")
+        # print("loc b is out of reach")
         return False
 
     # not valid if there is a black token at loc b
-    if b in board : 
-        if board[b].col == BLACK :
+    if b in board:
+        if board[b].col == BLACK:
             return False
 
     # invalid if loc a or loc b are not in valid range
-    if a[0] not in range(0,8) :
-        #print("loc a not on board")
+    if a[0] not in range(0, 8):
+        # print("loc a not on board")
         return False
-    if a[1] not in range(0,8) :
-        #print("loc a not on board")
+    if a[1] not in range(0, 8):
+        # print("loc a not on board")
         return False
-    if b[0] not in range(0,8) :
-        #print("loc b not on board")
+    if b[0] not in range(0, 8):
+        # print("loc b not on board")
         return False
-    if b[1] not in range(0,8) :
-        #print("loc b not on board")
+    if b[1] not in range(0, 8):
+        # print("loc b not on board")
         return False
 
     # has passed all the checks, so we return true
@@ -122,45 +121,44 @@ def valid_move(n, a, b, board) :
 
 
 def move_token(n, a, b, board):
-
     # check if move is valid
-    if not valid_move(n, a, b, board) :
+    if not valid_move(n, a, b, board):
         return board
 
     # handle case where there is already a token at loc b (stack new tokens on top)
-    if b in board :
+    if b in board:
         current_height_b = board[b].h
         new_height_b = current_height_b + n
         board[b] = Piece("w", new_height_b)
-    else: # loc b has no tokens yet so we can just put our new tokens there
+    else:  # loc b has no tokens yet so we can just put our new tokens there
         board[b] = Piece("w", n)
 
     # handle potential remaining tokens at loc a
     current_height_a = board[a].h
     new_height_a = current_height_a - n
-    if new_height_a == 0 :
+    if new_height_a == 0:
         # no more tokens left at loc a
         del board[a]
-    else :
+    else:
         board[a] = Piece("w", new_height_a)
-        
+
     # done
     return board
 
 
-def valid_boom(origin, my_board) :
-
-    if origin[0] not in range(0,8) :
+def valid_boom(origin, my_board):
+    if origin[0] not in range(0, 8):
         print("x coordinate not in range")
         return False
-    if origin[1] not in range(0,8) :
+    if origin[1] not in range(0, 8):
         print("y coordinate not in range")
         return False
     if origin not in my_board:
         print("origin not on board")
         return False
-    
+
     return True
+
 
 def boom_piece(origin, init_board):
     if not valid_boom(origin, init_board):
@@ -213,4 +211,3 @@ def n_pieces(board, piece_col):
                 cnt += board[xy].h
 
     return cnt
-

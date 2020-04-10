@@ -1,9 +1,9 @@
 import sys
 import json
 
-from game import *
+
 from search import *
-from util import *
+
 
 
 
@@ -11,14 +11,18 @@ from util import *
 def main():
     with open(sys.argv[1]) as file:
         data = json.load(file)
-    
+
     my_board = insert_data_from_json(data)
-    print_board(my_board)
+    expendibots = Expendibots(my_board, None)
 
-    boom_board = boom_piece((1, 4), my_board)
+    solution_node = recursive_best_first_search(expendibots, None)
 
-    print_board(boom_board)
+    path_to_solution = solution_node.path()
+    print("we didn't get this far did we?")
+    for node in path_to_solution:
+        action = node.action
+        action.print_action()
 
-    print_board(my_board)
+
 if __name__ == '__main__':
     main()
