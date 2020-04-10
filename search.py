@@ -7,7 +7,8 @@ import util as u
 
 #from collections import deque AIMA
 #from utils import * AIMA
-from collections import defaultdict
+from collections import defaultdict, deque
+
 from game import Piece, BLACK, WHITE, MOVE, BOOM
 import numpy as np
 import game as g
@@ -64,14 +65,14 @@ class Expendibots(Problem) :
 
     #the below functions are just an example of the way 8-puzzle was implemented as a problem. 
 
-    def __init__(self, board, goal= None):
+    def __init__(self, board, goal=None):
         """ Define goal state and initialize a problem """
         super().__init__(board, goal)
         self.board = board
         self.goal = goal
 
-    def __copy__(self):
-        return Expendibots(self.board, None)
+    """def __copy__(self):
+        return Expendibots(self.board, None)"""
 
 
     def actions(self, board):
@@ -84,6 +85,7 @@ class Expendibots(Problem) :
             #for each white token
             if board[key].col == WHITE:
                 
+                
                 #one possible action is to boom the white token
                 boom = Action(BOOM, 1, key, None)
                 possible_actions.append(boom)
@@ -92,8 +94,8 @@ class Expendibots(Problem) :
                 for n in range(1, board[key].h + 1) :
                     
                     # for each coordinate within range
-                    for x in range(key[0] - board[key].h, key[0] + board[key].h + 1) :
-                        for y in range(key[1] - board[key].h, key[1] + board[key].h + 1) :
+                    for x in range(key[0] - 1, key[0] + 2) :
+                        for y in range(key[1] - 1, key[1] + 2) :
                             
                             #if move is valid, add it to the possible_actions
                             if g.valid_move(n, key, (x,y), board) :
@@ -116,9 +118,9 @@ class Expendibots(Problem) :
         else:
             return g.move_token(action.n, action.loc_a, action.loc_b, local_board) #returns a new moved board
 
-
+    """
     def perform_action(self, action) :
-        """Given state and action, perform action to the state"""
+        #Given state and action, perform action to the state
 
         my_type = action.action_type
 
@@ -130,7 +132,7 @@ class Expendibots(Problem) :
             new_board = g.move_token(action.n, action.loc_a, action.loc_b, self.board)
             self.board = new_board
             
-
+    """
 
     def goal_test(self, board):
         """ Given a state of the board, return True if state is a goal state (no remaining black tokens) or False, otherwise """
@@ -179,20 +181,24 @@ class Node:
     an explanation of how the f and h values are handled. You will not need to
     subclass this class."""
 
-    def __init__(self, state, h=0, parent=None, action=None, path_cost=0, repeats = 0):
+    def __init__(self, state, h=0, parent=None, action=None, depth = 0, path_cost=0):
         """Create a search tree Node, derived from a parent by an action."""
         self.state = state
         self.parent = parent
         self.action = action
         self.h = self.heuristic() #heuristic value of the node, not dependent on path, only depends on the # black&white tokens on board
         self.path_cost = path_cost
-        self.depth = 0
         self.repeats = self.repeated_states()#repeats = 0 if this is the first version of this state, repeats = 1 if there are two duplicate nodes
+        self.depth = 0
         if parent:
             self.depth = parent.depth + 1
+        
 
     def __repr__(self):
         return "<Node {}>".format(self.state)
+
+    def __eq__(self, node):
+        return dict_equal(self.state, node.state)
 
     def heuristic(self):
         white_counter = 12
@@ -254,7 +260,7 @@ class Node:
 
         # at first finding of an equal node state, return the number of repeats stored in that node
         while node:
-            if node.state == this_state :
+            if dict_equal(node.state,this_state) :
                 return node.repeats + 1
             node = node.parent
         return 0
@@ -289,9 +295,13 @@ def recursive_best_first_search(problem, h=None):
             return None
 
         for s in successors:
-            if s.repeated_states() == 4 : #remove those that repeat a state four times
+            s.repeats = s.repeated_states()
+            if s.repeats == 2 : #remove those that repeat a state four times
+                print(s.__repr__())
                 successors.remove(s)
-        
+                print("4 repeated states detected! Node removed. ")
+            elif s.depth > 250 :
+                successors.remove(s)
         #check again if there are any successors left after removing nodes that have 4 repeated states
         if len(successors) == 0:
             return None
@@ -319,8 +329,8 @@ def recursive_best_first_search(problem, h=None):
             else:
                 alternative = np.inf
                 print(alternative)
-            #successors.pop(0)
-            result, best.f = RBFS(problem, best, min(flimit, alternative))
+            
+            result = RBFS(problem, best, min(flimit, alternative))
             if result is not None:
                 return result
 
@@ -352,17 +362,63 @@ class Action :
 
 
 
-def hash_dict(my_dict):
-    """
-    Uses a frozen set to return a hash of the dictionary
-    :param my_dict: provided dictionary
-    :return: hash
-    """
-    return hash(frozenset(my_dict.items()))
+def dict_equal(dict1, dict2) : 
 
+    d1_keys = set(dict1.keys())
+    d2_keys = set(dict2.keys())
 
-def four_recurrences(rec_tracker):
-    if 4 in rec_tracker.values():
-        return True
-    else:
+    #continue only if both dicts contain the same keys
+    if not (d1_keys.issubset(d2_keys) and d2_keys.issubset(d1_keys)) :
         return False
+    
+    #continue only if all the keys correspond to the same values
+    for key in dict1.keys() :
+        if not (dict1[key] == dict2[key]) :
+            return False
+    
+    #return True if the dicts passed the checks
+    return True
+
+
+
+
+def breadth_first_tree_search(problem):
+    """
+    [Figure 3.7]
+    Search the shallowest nodes in the search tree first.
+    Search through the successors of a problem to find a goal.
+    The argument frontier should be an empty queue.
+    Repeats infinitely in case of loops.
+    """
+
+    frontier = deque([Node(problem.board)])  # FIFO queue
+
+    while frontier:
+        node = frontier.popleft()
+        print(node.__repr__())
+        if problem.goal_test(node.state):
+            print("solution node found")
+            return node
+        
+        nboard = problem.board
+        if node.depth != 0 :
+            print("Hello")
+            action = node.action
+            if action.action_type == MOVE :
+                nboard = g.move_token(action.n, action.loc_a, action.loc_b, nboard)
+            else :
+                nboard = g.boom(action.loc_a, nboard)
+            problem = Expendibots(nboard)
+
+        successors = node.expand(problem, problem.board)
+        for s in successors: 
+            print("S-node: " + str(s.__repr__()))
+            print("Number of successor nodes: " + str(len(successors)))
+
+        frontier.extend(node.expand(problem, problem.board))
+        for fnode in frontier: 
+            print("Number of nodes in frontier: " + str(len(frontier)))
+            print("Fnode: " + str(fnode.__repr__()))
+
+    print("why can't we find the solution :((( ")
+    return None

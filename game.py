@@ -147,37 +147,6 @@ def move_token(n, a, b, board):
     # done
     return board
 
-"""
-def valid_boom_victim(a, board):
-    # invalid if a is not on the board
-    if a[0] not in range(8):
-        print("a[0] not in range")
-        return False
-    if a[1] not in range(8):
-        print("a[1] not in range")
-        return False
-
-    # invalid if there is no token at loc a
-    if a not in board:
-        print("loc a not on the board")
-        return False
-
-    print("passed valid_boom_victim tests")
-    # if it passes tests, return true
-    return True
-
-
-def valid_boom_move(a, board):
-    # invalid if a is not on the board
-    if not valid_boom_victim(a, board):
-        return False
-
-    # invalid if token at loc a is black
-    if board[a].col == BLACK:
-        return False
-
-    # if it passes tests, return true
-    return True"""
 
 
 def valid_boom(origin, my_board) :
@@ -189,7 +158,7 @@ def valid_boom(origin, my_board) :
         print("y coordinate not in range")
         return False
     if origin not in my_board:
-        print("origin not on board")
+        print("boom origin location has no token on it")
         return False
     
     return True
