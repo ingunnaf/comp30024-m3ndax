@@ -107,14 +107,9 @@ class Expendibots(Problem):
         else:
             return move_token(action.n, action.loc_a, action.loc_b, local_board)  # returns a new moved board
 
-<<<<<<< HEAD
     """
     def perform_action(self, action) :
         #Given state and action, perform action to the state
-=======
-    def perform_action(self, action):
-        """Given state and action, perform action to the state"""
->>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
 
         my_type = action.action_type
 
@@ -125,11 +120,8 @@ class Expendibots(Problem):
         else:
             new_board = move_token(action.n, action.loc_a, action.loc_b, self.board)
             self.board = new_board
-<<<<<<< HEAD
             
     """
-=======
->>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
 
     def goal_test(self, board):
         """ Given a state of the board, return True if state is a goal state (no remaining black tokens) or False, otherwise """
@@ -175,24 +167,15 @@ class Node:
     an explanation of how the f and h values are handled. You will not need to
     subclass this class."""
 
-<<<<<<< HEAD
     def __init__(self, state, h=0, parent=None, action=None, depth = 0, path_cost=0):
-=======
-    def __init__(self, state, h=0, parent=None, action=None, path_cost=0, repeats=0):
->>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
         """Create a search tree Node, derived from a parent by an action."""
         self.state = state
         self.parent = parent
         self.action = action
         self.h = self.heuristic()  # heuristic value of the node, not dependent on path, only depends on the # black&white tokens on board
         self.path_cost = path_cost
-<<<<<<< HEAD
         self.repeats = self.repeated_states()#repeats = 0 if this is the first version of this state, repeats = 1 if there are two duplicate nodes
         self.depth = 0
-=======
-        self.depth = 0
-        self.repeats = self.repeated_states()  # repeats = 0 if this is the first version of this state, repeats = 1 if there are two duplicate nodes
->>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
         if parent:
             self.depth = parent.depth + 1
         
@@ -261,11 +244,7 @@ class Node:
 
         # at first finding of an equal node state, return the number of repeats stored in that node
         while node:
-<<<<<<< HEAD
             if dict_equal(node.state,this_state) :
-=======
-            if node.state == this_state:
->>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
                 return node.repeats + 1
             node = node.parent
         return 0
@@ -300,7 +279,6 @@ def recursive_best_first_search(problem, h=None):
             return None
 
         for s in successors:
-<<<<<<< HEAD
             s.repeats = s.repeated_states()
             if s.repeats == 2 : #remove those that repeat a state four times
                 print(s.__repr__())
@@ -309,12 +287,6 @@ def recursive_best_first_search(problem, h=None):
             elif s.depth > 250 :
                 successors.remove(s)
         #check again if there are any successors left after removing nodes that have 4 repeated states
-=======
-            if s.repeated_states() == 4:  # remove those that repeat a state four times
-                successors.remove(s)
-
-        # check again if there are any successors left after removing nodes that have 4 repeated states
->>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
         if len(successors) == 0:
             return None
 
@@ -341,13 +313,8 @@ def recursive_best_first_search(problem, h=None):
             else:
                 alternative = np.inf
                 print(alternative)
-<<<<<<< HEAD
             
             result = RBFS(problem, best, min(flimit, alternative))
-=======
-            # successors.pop(0)
-            result, best.f = RBFS(problem, best, min(flimit, alternative))
->>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
             if result is not None:
                 return result
 
@@ -376,7 +343,6 @@ class Action:
             u.print_boom(self.loc_a[0], self.loc_a[1])
 
 
-<<<<<<< HEAD
 
 
 def dict_equal(dict1, dict2) : 
@@ -400,9 +366,6 @@ def dict_equal(dict1, dict2) :
 
 
 def breadth_first_tree_search(problem):
-=======
-def hash_dict(my_dict):
->>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
     """
     [Figure 3.7]
     Search the shallowest nodes in the search tree first.
@@ -413,7 +376,6 @@ def hash_dict(my_dict):
 
     frontier = deque([Node(problem.board)])  # FIFO queue
 
-<<<<<<< HEAD
     while frontier:
         node = frontier.popleft()
         print(node.__repr__())
@@ -443,10 +405,3 @@ def hash_dict(my_dict):
 
     print("why can't we find the solution :((( ")
     return None
-=======
-def four_recurrences(rec_tracker):
-    if 4 in rec_tracker.values():
-        return True
-    else:
-        return False
->>>>>>> 2fa5a928ad0b42d777ede82df293b5a9cb8d3ac0
