@@ -176,11 +176,9 @@ def boom(origin, my_board):
 
     else:
         x, y = origin[0], origin[1]
-        my_range = my_board[origin].h
+        my_range = 1
 
         del my_board[origin]
-
-        booms = []
 
         right_limit = x + my_range + 1
         left_limit = x - my_range
@@ -190,10 +188,7 @@ def boom(origin, my_board):
         for i in range(left_limit, right_limit):
             for j in range(down_limit, up_limit):
                 if (i, j) in my_board:
-                    booms.append((i, j))
-
-        for boomer in booms:
-            boom(boomer, my_board)
+                    boom((i,j), my_board)
 
     return my_board
 
