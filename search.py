@@ -110,21 +110,6 @@ class Expendibots(Problem):
         else:
             return move_token(action.n, action.loc_a, action.loc_b, local_board)  # returns a new moved board
 
-    """
-    def perform_action(self, action) :
-        #Given state and action, perform action to the state
-
-        my_type = action.action_type
-
-        if my_type == BOOM:
-            new_board = boom_piece(action.loc_a, self.board)
-            self.board = new_board
-
-        else:
-            new_board = move_token(action.n, action.loc_a, action.loc_b, self.board)
-            self.board = new_board
-            
-    """
 
     def goal_test(self, board):
         """ Given a state of the board, return True if state is a goal state (no remaining black tokens) or False, otherwise """
@@ -213,7 +198,15 @@ class Node:
         for action in problem.actions(board):
             action.print_action()  # ah so here is where the print statement is! -> it reveals that all the same actions are generated repeatedly
             child = self.child_node(problem, action)
-            children.append(child)
+
+            # check number of repeats prior to appending child to children
+            child.repeats = child.repeated_states()
+            if not (child.repeats > 3 or child.depth > 250): #remove those that repeat a state four times
+                children.append(child)
+            else: 
+                print("4 repeated states detected! Node removed. ")
+                # it never prints this statement although I have counted the number of repeats manually so the repeats function is definitely not working properly
+            
         return children
 
     def child_node(self, problem, action):
@@ -280,40 +273,18 @@ def recursive_best_first_search(problem, h=None):
         if len(successors) == 0:
             return None
 
-        for s in successors:
-            s.repeats = s.repeated_states()
-            if s.repeats == 2 : #remove those that repeat a state four times
-                print(s.__repr__())
-                successors.remove(s)
-                print("4 repeated states detected! Node removed. ")
-            elif s.depth > 250 :
-                successors.remove(s)
-        #check again if there are any successors left after removing nodes that have 4 repeated states
-        if len(successors) == 0:
-            return None
 
         while True:
             # Order by lowest heuristic value
             successors.sort(key=lambda node: node.h)
             best = successors[0]
-
-            # perform action to board so that the new board is passed to the recurring function
-            action = best.action
-            board = problem.board  # current_board
-            if action.action_type == MOVE:
-                board = move_token(action.n, action.loc_a, action.loc_b, board)
-            else:
-                board = boom_piece(action.loc_a, board)
-            problem = Expendibots(board)
-
-            print(best.__repr__())
             if best.h > flimit:
                 return None
             if len(successors) > 1:
                 alternative = successors[1].h
                 print(alternative)
             else:
-                alternative = np.inf
+                alternative = inf
                 print(alternative)
             
             result = RBFS(problem, best, min(flimit, alternative))
@@ -322,7 +293,7 @@ def recursive_best_first_search(problem, h=None):
 
     h = 0
     node = Node(problem.board, h)
-    result = RBFS(problem, node, np.inf)
+    result = RBFS(problem, node, inf)
     return result
 
 
@@ -376,34 +347,27 @@ def breadth_first_tree_search(problem):
     Repeats infinitely in case of loops.
     """
     #stores explored nodes
+    #explored_states = set()
+    # to store all nodes 
     explored = []
 
     frontier = deque([Node(problem.board)])  # FIFO queue
 
     while frontier:
         node = frontier.popleft()
-        explored.append(node)
-        node.repeats = node.repeated_states()
-        if node.repeats > 1 : #should skip and not extend nodes that have already been repeated 4 times
-            continue
-        print(node.__repr__())
         if problem.goal_test(node.state):
             print("solution node found")
             return node
         
+        explored.append(node)
+
+        """
+        #only add children to the end of the queue if there are no more than 4 repeated states already
+        node.repeats = node.repeated_states()
+        if node.repeats > 1 : #should skip and not extend nodes that have already been repeated 4 times
+            continue"""
+        print(node.__repr__())
         frontier.extend(node.expand(problem, node.state))
 
     print("why can't we find the solution :((( ")
     return None
-
-"""
-nboard = problem.board
-if node.depth != 0 :
-    action = node.action
-    if action.action_type == MOVE :
-        nboard = move_token(action.n, action.loc_a, action.loc_b, nboard)
-    else :
-        nboard = boom(action.loc_a, nboard)
-    problem = Expendibots(nboard)
-    """
-       
