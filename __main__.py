@@ -17,18 +17,13 @@ def main():
     print_board(my_board)
 
     solution_node = breadth_first_tree_search(problem)
-    print(solution_node.parent.__repr__())
-    print(solution_node.depth)
-    print(solution_node.repeats)
-    """
+    
     path_to_solution = solution_node.path()
-    if path_to_solution: 
-        for node in path_to_solution :
-            action = node.action
-            action.print_action()
-    else: 
-        print("Actually, solution was not found? ")
-    """
+    
+    for node in path_to_solution[1:] :
+        action = node.action
+        action.print_action()
+    
 
 if __name__ == '__main__':
     main()

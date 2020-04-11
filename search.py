@@ -232,6 +232,7 @@ class Node:
         node, path_back = self, []
         while node:
             path_back.append(node)
+            print(node.__repr__())
             node = node.parent
         return list(reversed(path_back))
 
@@ -374,11 +375,17 @@ def breadth_first_tree_search(problem):
     The argument frontier should be an empty queue.
     Repeats infinitely in case of loops.
     """
+    #stores explored nodes
+    explored = []
 
     frontier = deque([Node(problem.board)])  # FIFO queue
 
     while frontier:
         node = frontier.popleft()
+        explored.append(node)
+        node.repeats = node.repeated_states()
+        if node.repeats > 1 : #should skip and not extend nodes that have already been repeated 4 times
+            continue
         print(node.__repr__())
         if problem.goal_test(node.state):
             print("solution node found")
