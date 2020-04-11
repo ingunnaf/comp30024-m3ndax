@@ -3,6 +3,7 @@ This module contains functions and data types related to the playing of Expendib
 """
 
 from collections import namedtuple
+import copy
 
 # define static variables
 BLACK = 'b'
@@ -165,7 +166,7 @@ def boom_piece(origin, init_board):
     if not valid_boom(origin, init_board):
         raise RuntimeError("Invalid Boom Move")
 
-    ret_board = init_board.copy()
+    ret_board = copy.deepcopy(init_board)
     boom(origin, ret_board)
     return ret_board
 
