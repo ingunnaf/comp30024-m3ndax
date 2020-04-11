@@ -6,6 +6,7 @@ These functions are used to find the a winning set of moves
 from util import *
 from numpy import *
 from game import *
+import copy
 #import deque
 
 
@@ -101,7 +102,7 @@ class Expendibots(Problem):
         Action is assumed to be a valid action in the state """
 
         my_type = action.action_type
-        local_board = board.copy()
+        local_board = copy.deepcopy(board)
 
         if my_type == BOOM:
             return boom_piece(action.loc_a, local_board)  # returns a new boomed board
