@@ -9,7 +9,7 @@ from game import *
 import copy
 from collections import deque
 
-
+#TODO check that the repeats counting functionality works as intended -> my thought was that each node would store the number of times the state (board) it stores has been repeateded previously on the path to that node, and that each time we pop a new node from the queue, we update the number of repeats, and if it has 4 or more, we just skip that node and continue the loop
 
 # AIMA class
 class Problem:
