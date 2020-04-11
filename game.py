@@ -91,9 +91,9 @@ def valid_move(n, a, b, board):
         return False
 
     # not valid if loc b is out of reach
-    reach = board[(a)].h
+    my_range = board[(a)].h
     dist = manhat_dist(a, b)
-    if (dist > reach) or (dist > n):
+    if (dist > my_range):
         # print("loc b is out of reach")
         return False
 
