@@ -360,12 +360,6 @@ def breadth_first_tree_search(problem):
             return node
         
         explored.append(node)
-
-        """
-        #only add children to the end of the queue if there are no more than 4 repeated states already
-        node.repeats = node.repeated_states()
-        if node.repeats > 1 : #should skip and not extend nodes that have already been repeated 4 times
-            continue"""
         print(node.__repr__())
         frontier.extend(node.expand(problem, node.state))
 
