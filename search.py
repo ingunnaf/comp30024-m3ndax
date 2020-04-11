@@ -7,7 +7,7 @@ from util import *
 from numpy import *
 from game import *
 import copy
-#import deque
+from collections import deque
 
 
 
@@ -218,7 +218,7 @@ class Node:
 
     def child_node(self, problem, action):
         """Given a current problem and an action, this func generates the next node and returns that"""
-        next_state = problem.result(action, problem.board)  # generates a new board state
+        next_state = problem.result(action, self.state)  # generates a new board state
         h = 0  # not needed
         next_node = Node(next_state, h, self, action, 0)  # creates a new node
         return next_node
@@ -384,25 +384,19 @@ def breadth_first_tree_search(problem):
             print("solution node found")
             return node
         
-        nboard = problem.board
-        if node.depth != 0 :
-            print("Hello")
-            action = node.action
-            if action.action_type == MOVE :
-                nboard = move_token(action.n, action.loc_a, action.loc_b, nboard)
-            else :
-                nboard = boom(action.loc_a, nboard)
-            problem = Expendibots(nboard)
-
-        successors = node.expand(problem, problem.board)
-        for s in successors: 
-            print("S-node: " + str(s.__repr__()))
-            print("Number of successor nodes: " + str(len(successors)))
-
-        frontier.extend(node.expand(problem, problem.board))
-        for fnode in frontier: 
-            print("Number of nodes in frontier: " + str(len(frontier)))
-            print("Fnode: " + str(fnode.__repr__()))
+        frontier.extend(node.expand(problem, node.state))
 
     print("why can't we find the solution :((( ")
     return None
+
+"""
+nboard = problem.board
+if node.depth != 0 :
+    action = node.action
+    if action.action_type == MOVE :
+        nboard = move_token(action.n, action.loc_a, action.loc_b, nboard)
+    else :
+        nboard = boom(action.loc_a, nboard)
+    problem = Expendibots(nboard)
+    """
+       
