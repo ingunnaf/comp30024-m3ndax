@@ -3,9 +3,11 @@ This module contains functions and data types for the creation and searching of 
 These functions are used to find the a winning set of moves
 """
 
-import util as u
+from util import *
+from numpy import *
 from game import *
-import numpy as np
+#import deque
+
 
 
 # AIMA class
@@ -39,6 +41,7 @@ class Problem:
         return state == self.goal
 
     def path_cost(self, c, state1, action, state2):
+        #Not relevant to BFS
         """Return the cost of a solution path that arrives at state2 from
         state1 via action, assuming cost c to get up to state1. If the problem
         is such that the path doesn't matter, this function will only look at
@@ -55,7 +58,6 @@ class Expendibots(Problem):
     black player is static. A state is represented by a dict with the coordinates on the board as keys
     and a tuple containing the number of tokens and the colour of the tokens (col, h) as the value."""
 
-    # the below functions are just an example of the way 8-puzzle was implemented as a problem.
 
     def __init__(self, board, goal=None):
         """ Define goal state and initialize a problem """
@@ -63,8 +65,6 @@ class Expendibots(Problem):
         self.board = board
         self.goal = goal
 
-    """def __copy__(self):
-        return Expendibots(self.board, None)"""
 
     def actions(self, board):
         """ Return the actions that can be executed in the given state.
@@ -76,19 +76,21 @@ class Expendibots(Problem):
             # for each white token
             if board[key].col == WHITE:
 
-                # one possible action is to boom the white token
+                # one possible action is to boom the white token 
+                # #TODO check if there are any black tokens around it, if there aren't don't append this boom
                 boom = Action(BOOM, 1, key, None)
                 possible_actions.append(boom)
 
+                my_range = board[key].h
                 # for 1..n number of tokens to be moved
                 for n in range(1, board[key].h + 1):
 
                     # for each coordinate within range
-                    for x in range(key[0] - n , key[0] + n + 1) :
-                        for y in range(key[1] - n, key[1] + n + 1) :
+                    for x in range(key[0] - my_range , key[0] + my_range + 1) :
+                        for y in range(key[1] - my_range, key[1] + my_range + 1) :
                             
                             #if move is valid, add it to the possible_actions
-                            if g.valid_move(n, key, (x,y), board) :
+                            if valid_move(n, key, (x,y), board) :
                                 possible_actions.append(Action(MOVE, n, key, (x,y)) )
                                 
 
@@ -183,8 +185,6 @@ class Node:
     def __repr__(self):
         return "<Node {}>".format(self.state)
 
-    def __eq__(self, node):
-        return dict_equal(self.state, node.state)
 
     def heuristic(self):
         white_counter = 12
@@ -255,7 +255,7 @@ class Node:
     # want in other contexts.]
 
     def __eq__(self, other):
-        return isinstance(other, Node) and self.state == other.state
+        return isinstance(other, Node) and dict_equal(self.state, other.state)
 
     def __hash__(self):
         # We use the hash value of the state
@@ -338,9 +338,9 @@ class Action:
 
     def print_action(self):
         if self.action_type == MOVE:
-            u.print_move(self.n, self.loc_a[0], self.loc_a[1], self.loc_b[0], self.loc_b[1])
+            print_move(self.n, self.loc_a[0], self.loc_a[1], self.loc_b[0], self.loc_b[1])
         else:
-            u.print_boom(self.loc_a[0], self.loc_a[1])
+            print_boom(self.loc_a[0], self.loc_a[1])
 
 
 
@@ -388,9 +388,9 @@ def breadth_first_tree_search(problem):
             print("Hello")
             action = node.action
             if action.action_type == MOVE :
-                nboard = g.move_token(action.n, action.loc_a, action.loc_b, nboard)
+                nboard = move_token(action.n, action.loc_a, action.loc_b, nboard)
             else :
-                nboard = g.boom(action.loc_a, nboard)
+                nboard = boom(action.loc_a, nboard)
             problem = Expendibots(nboard)
 
         successors = node.expand(problem, problem.board)
