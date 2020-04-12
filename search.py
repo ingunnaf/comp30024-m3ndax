@@ -51,6 +51,7 @@ class Problem:
         return c + 1
 
 
+# Adapted from an AIMA function
 # ______________________________________________________________________________
 
 class Expendibots(Problem):
@@ -162,10 +163,11 @@ class Node:
         self.action = action
         self.h = self.heuristic()  # heuristic value of the node, not dependent on path, only depends on the # black&white tokens on board
         self.path_cost = path_cost
-        self.repeats = self.repeated_states()#repeats = 0 if this is the first version of this state, repeats = 1 if there are two duplicate nodes
+        self.repeats = 0
         self.depth = 0
         if parent:
             self.depth = parent.depth + 1
+    
         
 
     def __repr__(self):
@@ -199,10 +201,13 @@ class Node:
             action.print_action()  # ah so here is where the print statement is! -> it reveals that all the same actions are generated repeatedly
             child = self.child_node(problem, action)
 
+            child.repeated_states() #checks path to node and counts repeated states
             # check number of repeats prior to appending child to children
-            child.repeats = child.repeated_states()
-            if not (child.repeats > 3 or child.depth > 250): #remove those that repeat a state four times
+            if (child.repeats < 3 and child.depth < 250): #remove those that repeat a state four times
                 children.append(child)
+                print("child node: + repeats counter")
+                print(child.repeats)
+                print(child.__repr__())
             else: 
                 print("4 repeated states detected! Node removed. ")
                 # it never prints this statement although I have counted the number of repeats manually so the repeats function is definitely not working properly
@@ -231,18 +236,17 @@ class Node:
 
     def repeated_states(self):
         """Return the number of times the state of current node has been repeated previously"""
-        node = self
         # stores initial state to compare other nodes states to
-        this_state = self.state
+        this_state = copy.deepcopy(self.state)
 
-        node = node.parent
-
+        counter = 0
+        node = self.parent
         # at first finding of an equal node state, return the number of repeats stored in that node
         while node:
             if dict_equal(node.state,this_state) :
-                return node.repeats + 1
+                counter += 1
             node = node.parent
-        return 0
+        self.repeats = counter
 
     # We want for a queue of nodes in breadth_first_graph_search or
     # astar_search to have no duplicated states, so we treat nodes
@@ -337,7 +341,7 @@ def dict_equal(dict1, dict2) :
 
 
 
-
+#AIMA function
 def breadth_first_tree_search(problem):
     """
     [Figure 3.7]
