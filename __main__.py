@@ -1,11 +1,7 @@
 import sys
 import json
 
-from util import * 
-from game import *
 from search import *
-#from game import Piece, BLACK, WHITE, MOVE, BOOM
-
 
 
 def main():
@@ -13,17 +9,14 @@ def main():
         data = json.load(file)
 
     my_board = insert_data_from_json(data)
-    problem = Expendibots(my_board, None)
-    print_board(my_board)
 
+    problem = Expendibots(my_board, None)
     solution_node = breadth_first_tree_search(problem)
-    
-    path_to_solution = solution_node.path()
-    
-    for node in path_to_solution[1:] :
+
+    for node in solution_node.path()[1:]:
         action = node.action
         action.print_action()
-    
+
 
 if __name__ == '__main__':
     main()
