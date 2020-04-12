@@ -235,7 +235,6 @@ class Node:
 
             child.repeated_states() #checks path to node and counts repeated states
             # check number of repeats prior to appending child to children
-            child.repeats = child.repeated_states()
             if not (child.repeats > 3 or child.depth > 250):  # remove those that repeat a state four times
                 children.append(child)
             else:
