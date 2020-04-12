@@ -12,7 +12,10 @@ from collections import deque, Counter
 import numpy as np
 
 
-# TODO check that the repeats counting functionality works as intended -> my thought was that each node would store the number of times the state (board) it stores has been repeateded previously on the path to that node, and that each time we pop a new node from the queue, we update the number of repeats, and if it has 4 or more, we just skip that node and continue the loop
+# TODO check that the repeats counting functionality works as intended
+#  -> my thought was that each node would store the number of times the state (board) it stores has been
+#  repeateded previously on the path to that node, and that each time we pop a new node from the queue,
+#  we update the number of repeats, and if it has 4 or more, we just skip that node and continue the loop
 
 # AIMA class
 class Problem:
@@ -190,21 +193,38 @@ class Node:
     def heuristic(self):
         white_counter = 12
         black_counter = 0
-
+        black_to_white_distance = 0
+        WEIGHT = 1
         """ The search function chooses the node with the smallest heuristic value first. 
         We want to explore nodes with the minimum number of black tokens first and the highest number of white tokens? 
         """
         # h decreases the more white tokens are on the board, and increases the more black tokens are on the board
 
-        for key in self.state:
-            if self.state[key].col == BLACK:
-                black_counter += self.state[key].h
+        for key1 in self.state:
+
+            if self.state[key1].col == BLACK:
+                # count the number of remaining black pieces
+                black_counter += self.state[key1].h
+
+                # compare against other pieces
+                for key2 in self.state:
+                    # skip if the same piece
+                    if key1 == key2:
+                        pass
+                    # otherwise if the second key is white
+                    elif self.state[key2].col == WHITE:
+                        # calculate distances between black and white pieces
+                        black_to_white_distance += manhat_dist(key1, key2)
+                    # otherwise calculate black
+                    else:
+                        continue
+
             else:
-                white_counter -= self.state[key].h
+                white_counter -= self.state[key1].h
 
-        h = white_counter + black_counter
+        # print(black_to_white_distance)
 
-        return h
+        return WEIGHT * black_to_white_distance
 
     def expand(self, problem, board):
         """List the nodes reachable in one step from this node."""
