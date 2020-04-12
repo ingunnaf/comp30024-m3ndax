@@ -7,9 +7,12 @@ from util import *
 from numpy import *
 from game import *
 import copy
-from collections import deque
+import sys
+from collections import deque, Counter
+import numpy as np
 
-#TODO check that the repeats counting functionality works as intended -> my thought was that each node would store the number of times the state (board) it stores has been repeateded previously on the path to that node, and that each time we pop a new node from the queue, we update the number of repeats, and if it has 4 or more, we just skip that node and continue the loop
+
+# TODO check that the repeats counting functionality works as intended -> my thought was that each node would store the number of times the state (board) it stores has been repeateded previously on the path to that node, and that each time we pop a new node from the queue, we update the number of repeats, and if it has 4 or more, we just skip that node and continue the loop
 
 # AIMA class
 class Problem:
@@ -42,7 +45,7 @@ class Problem:
         return state == self.goal
 
     def path_cost(self, c, state1, action, state2):
-        #Not relevant to BFS
+        # Not relevant to BFS
         """Return the cost of a solution path that arrives at state2 from
         state1 via action, assuming cost c to get up to state1. If the problem
         is such that the path doesn't matter, this function will only look at
@@ -60,13 +63,11 @@ class Expendibots(Problem):
     black player is static. A state is represented by a dict with the coordinates on the board as keys
     and a tuple containing the number of tokens and the colour of the tokens (col, h) as the value."""
 
-
-    def __init__(self, board, goal=None):
+    def __init__(self, board, goal=create_board()):
         """ Define goal state and initialize a problem """
         super().__init__(board, goal)
         self.board = board
         self.goal = goal
-
 
     def actions(self, board):
         """ Return the actions that can be executed in the given state.
@@ -88,13 +89,12 @@ class Expendibots(Problem):
                 for n in range(1, board[key].h + 1):
 
                     # for each coordinate within range
-                    for x in range(key[0] - my_range , key[0] + my_range + 1) :
-                        for y in range(key[1] - my_range, key[1] + my_range + 1) :
-                            
-                            #if move is valid, add it to the possible_actions
-                            if valid_move(n, key, (x,y), board) :
-                                possible_actions.append(Action(MOVE, n, key, (x,y)) )
-                                
+                    for x in range(key[0] - my_range, key[0] + my_range + 1):
+                        for y in range(key[1] - my_range, key[1] + my_range + 1):
+
+                            # if move is valid, add it to the possible_actions
+                            if valid_move(n, key, (x, y), board):
+                                possible_actions.append(Action(MOVE, n, key, (x, y)))
 
         return possible_actions
 
@@ -111,7 +111,6 @@ class Expendibots(Problem):
         else:
             return move_token(action.n, action.loc_a, action.loc_b, local_board)  # returns a new moved board
 
-
     def goal_test(self, board):
         """ Given a state of the board, return True if state is a goal state (no remaining black tokens) or False, otherwise """
 
@@ -123,23 +122,38 @@ class Expendibots(Problem):
 
     def h(self, node):
         white_counter = 12
-        black_counter = 0
-
+        black_counter,  white_piece_density, black_to_white_distance = 0
+        WEIGHT = 2
         """ The search function chooses the node with the smallest heuristic value first. 
         We want to explore nodes with the minimum number of black tokens first and the highest number of white tokens? 
-
         """
         # h decreases the more white tokens are on the board, and increases the more black tokens are on the board
 
-        for key in self.board:
-            if self.board[key].col == BLACK:
-                black_counter += self.board[key].h
+        for key1 in node.state:
+
+            if node.state[key].col == BLACK:
+                # count the number of remaining black pieces
+                black_counter += node.state[key].h
+
+                # compare against other pieces
+                for key2 in node.state:
+                    # skip if the same piece
+                    if key1 == key2:
+                        pass
+                    # otherwise if the second key is white
+                    elif node.state[key].col == WHITE:
+                        # calculate distances between black and white pieces
+                        black_to_white_distance += manhat_dist(key1, key2)
+                    # otherwise calculate black
+                    else:
+                        continue
+
             else:
-                white_counter -= self.board[key].h
+                white_counter -= node.state[key].h
 
-        h = white_counter + black_counter
+        print(black_to_white_distance)
 
-        return h
+        return white_counter + black_counter + WEIGHT * black_to_white_distance
 
 
 # ______________________________________________________________________________
@@ -156,7 +170,7 @@ class Node:
     an explanation of how the f and h values are handled. You will not need to
     subclass this class."""
 
-    def __init__(self, state, h=0, parent=None, action=None, depth = 0, path_cost=0):
+    def __init__(self, state, h=0, parent=None, action=None, depth=0, path_cost=0):
         """Create a search tree Node, derived from a parent by an action."""
         self.state = state
         self.parent = parent
@@ -173,14 +187,12 @@ class Node:
     def __repr__(self):
         return "<Node {}>".format(self.state)
 
-
     def heuristic(self):
         white_counter = 12
         black_counter = 0
 
         """ The search function chooses the node with the smallest heuristic value first. 
         We want to explore nodes with the minimum number of black tokens first and the highest number of white tokens? 
-
         """
         # h decreases the more white tokens are on the board, and increases the more black tokens are on the board
 
@@ -198,20 +210,19 @@ class Node:
         """List the nodes reachable in one step from this node."""
         children = []
         for action in problem.actions(board):
-            action.print_action()  # ah so here is where the print statement is! -> it reveals that all the same actions are generated repeatedly
+            # action.print_action()  # ah so here is where the print statement is! -> it reveals that all the same actions are generated repeatedly
             child = self.child_node(problem, action)
 
             child.repeated_states() #checks path to node and counts repeated states
             # check number of repeats prior to appending child to children
-            if (child.repeats < 3 and child.depth < 250): #remove those that repeat a state four times
+            child.repeats = child.repeated_states()
+            if not (child.repeats > 3 or child.depth > 250):  # remove those that repeat a state four times
                 children.append(child)
-                print("child node: + repeats counter")
-                print(child.repeats)
-                print(child.__repr__())
-            else: 
-                print("4 repeated states detected! Node removed. ")
+            else:
+                # print("4 repeated states detected! Node removed. ")
+                continue
                 # it never prints this statement although I have counted the number of repeats manually so the repeats function is definitely not working properly
-            
+
         return children
 
     def child_node(self, problem, action):
@@ -230,7 +241,7 @@ class Node:
         node, path_back = self, []
         while node:
             path_back.append(node)
-            print(node.__repr__())
+            # print(node.__repr__())
             node = node.parent
         return list(reversed(path_back))
 
@@ -277,7 +288,6 @@ def recursive_best_first_search(problem, h=None):
         if len(successors) == 0:
             return None
 
-
         while True:
             # Order by lowest heuristic value
             successors.sort(key=lambda node: node.h)
@@ -290,7 +300,7 @@ def recursive_best_first_search(problem, h=None):
             else:
                 alternative = inf
                 print(alternative)
-            
+
             result = RBFS(problem, best, min(flimit, alternative))
             if result is not None:
                 return result
@@ -320,26 +330,21 @@ class Action:
             print_boom(self.loc_a[0], self.loc_a[1])
 
 
-
-
-def dict_equal(dict1, dict2) : 
-
+def dict_equal(dict1, dict2):
     d1_keys = set(dict1.keys())
     d2_keys = set(dict2.keys())
 
-    #continue only if both dicts contain the same keys
-    if not (d1_keys.issubset(d2_keys) and d2_keys.issubset(d1_keys)) :
+    # continue only if both dicts contain the same keys
+    if not (d1_keys.issubset(d2_keys) and d2_keys.issubset(d1_keys)):
         return False
-    
-    #continue only if all the keys correspond to the same values
-    for key in dict1.keys() :
-        if not (dict1[key] == dict2[key]) :
+
+    # continue only if all the keys correspond to the same values
+    for key in dict1.keys():
+        if not (dict1[key] == dict2[key]):
             return False
-    
-    #return True if the dicts passed the checks
+
+    # return True if the dicts passed the checks
     return True
-
-
 
 #AIMA function
 def breadth_first_tree_search(problem):
@@ -350,8 +355,8 @@ def breadth_first_tree_search(problem):
     The argument frontier should be an empty queue.
     Repeats infinitely in case of loops.
     """
-    #stores explored nodes
-    #explored_states = set()
+    # stores explored nodes
+    # explored_states = set()
     # to store all nodes 
     explored = []
 
@@ -360,12 +365,76 @@ def breadth_first_tree_search(problem):
     while frontier:
         node = frontier.popleft()
         if problem.goal_test(node.state):
-            print("solution node found")
+            # print("solution node found")
             return node
-        
+
         explored.append(node)
-        print(node.__repr__())
+        # print(node.__repr__())
         frontier.extend(node.expand(problem, node.state))
 
     print("why can't we find the solution :((( ")
     return None
+
+# ______________________________________________________________________________
+
+def depth_limited_search(problem, limit=250):
+    """[Figure 3.17]"""
+
+    def recursive_dls(node, problem, limit):
+        if problem.goal_test(node.state):
+            return node
+        elif limit == 0:
+            return 'cutoff'
+        else:
+            cutoff_occurred = False
+            for child in node.expand(problem, node.state):
+                result = recursive_dls(child, problem, limit - 1)
+                if result == 'cutoff':
+                    cutoff_occurred = True
+                elif result is not None:
+                    return result
+            return 'cutoff' if cutoff_occurred else None
+
+    # Body of depth_limited_search:
+    return recursive_dls(Node(problem.initial), problem, limit)
+
+
+def iterative_deepening_search(problem):
+    """[Figure 3.18]"""
+    for depth in range(sys.maxsize):
+        result = depth_limited_search(problem, depth)
+        if result != 'cutoff':
+            return result
+
+# ______________________________________________________________________________
+
+def recursive_best_first_search(problem, h=None):
+    """[Figure 3.26]"""
+    h = memoize(h or problem.h, 'h')
+
+    def RBFS(problem, node, flimit):
+        if problem.goal_test(node.state):
+            return node, 0  # (The second value is immaterial)
+        successors = node.expand(problem, node.state)
+        if len(successors) == 0:
+            return None, np.inf
+        for s in successors:
+            s.f = max(s.path_cost + h(s), node.f)
+        while True:
+            # Order by lowest f value
+            successors.sort(key=lambda x: x.f)
+            best = successors[0]
+            if best.f > flimit:
+                return None, best.f
+            if len(successors) > 1:
+                alternative = successors[1].f
+            else:
+                alternative = np.inf
+            result, best.f = RBFS(problem, best, min(flimit, alternative))
+            if result is not None:
+                return result, best.f
+
+    node = Node(problem.initial)
+    node.f = h(node)
+    result, bestf = RBFS(problem, node, np.inf)
+    return result

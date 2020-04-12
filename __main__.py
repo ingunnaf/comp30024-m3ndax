@@ -1,10 +1,8 @@
 import sys
 import json
+import timeit
 
-from util import * 
-from game import *
 from search import *
-#from game import Piece, BLACK, WHITE, MOVE, BOOM
 
 
 
