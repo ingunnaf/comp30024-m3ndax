@@ -23,18 +23,19 @@ def main():
         action.print_action()'''
 
     start = timeit.default_timer()
-    solution_node2 = iterative_deepening_search(problem)
+    # solution_node2 = iterative_deepening_search(problem)
 
-    # solution_node2 = recursive_best_first_search(problem)
+    solution_node2 = recursive_best_first_search(problem)
 
     for node in solution_node2.path()[1:]:
-        # print_board(node.state)
+        #print_board(node.state)
         action = node.action
         action.print_action()
-        print(node.repeats)
-    
-    
+        #print(node.repeats)
 
+    stop = timeit.default_timer()
+
+    print("time: " + str(stop - start))
 
     #solution_node = recursive_best_first_search(problem, h=None)
     

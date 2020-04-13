@@ -154,7 +154,7 @@ class Expendibots(Problem):
             else:
                 white_counter -= node.state[key].h
 
-        print(black_to_white_distance)
+        # print(black_to_white_distance)
 
         return white_counter + black_counter + WEIGHT * black_to_white_distance
 
@@ -210,7 +210,7 @@ class Node:
                 for key2 in self.state:
                     # skip if the same piece
                     if key1 == key2:
-                        pass
+                        continue
                     # otherwise if the second key is white
                     elif self.state[key2].col == WHITE:
                         # calculate distances between black and white pieces
@@ -222,9 +222,13 @@ class Node:
             else:
                 white_counter -= self.state[key1].h
 
-        # print(black_to_white_distance)
+        if n_pieces(self.state, WHITE):
+            print(black_to_white_distance/n_pieces(self.state, WHITE))
+        h = black_counter + white_counter #+ WEIGHT * black_to_white_distance
 
-        return WEIGHT * black_to_white_distance
+        print(h)
+
+        return h
 
     def expand(self, problem, board):
         """List the nodes reachable in one step from this node."""
@@ -235,7 +239,7 @@ class Node:
 
             child.repeated_states() #checks path to node and counts repeated states
             # check number of repeats prior to appending child to children
-            if not (child.repeats > 3 or child.depth > 250):  # remove those that repeat a state four times
+            if not (child.repeats >= 2 or child.depth > 250):  # remove those that repeat a state four times
                 children.append(child)
             else:
                 # print("4 repeated states detected! Node removed. ")
@@ -315,10 +319,10 @@ def recursive_best_first_search(problem, h=None):
                 return None
             if len(successors) > 1:
                 alternative = successors[1].h
-                print(alternative)
+                # print(alternative)
             else:
                 alternative = inf
-                print(alternative)
+                # print(alternative)
 
             result = RBFS(problem, best, min(flimit, alternative))
             if result is not None:
