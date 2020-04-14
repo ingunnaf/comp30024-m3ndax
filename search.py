@@ -12,11 +12,6 @@ from collections import deque, Counter
 import numpy as np
 
 
-# TODO check that the repeats counting functionality works as intended
-#  -> my thought was that each node would store the number of times the state (board) it stores has been
-#  repeateded previously on the path to that node, and that each time we pop a new node from the queue,
-#  we update the number of repeats, and if it has 4 or more, we just skip that node and continue the loop
-
 # AIMA class
 class Problem:
     """The abstract class for a formal problem. You should subclass
@@ -82,8 +77,7 @@ class Expendibots(Problem):
             # for each white token
             if board[key].col == WHITE:
 
-                # one possible action is to boom the white token 
-                # #TODO check if there are any black tokens around it, if there aren't don't append this boom
+                # one possible action is to boom the white token
                 boom = Action(BOOM, 1, key, None)
                 possible_actions.append(boom)
 
@@ -194,7 +188,7 @@ class Node:
         white_counter = 12
         black_counter = 0
         black_to_white_distance = 0
-        WEIGHT = 1
+
         """ The search function chooses the node with the smallest heuristic value first. 
         We want to explore nodes with the minimum number of black tokens first and the highest number of white tokens? 
         """
@@ -222,11 +216,10 @@ class Node:
             else:
                 white_counter -= self.state[key1].h
 
-        if n_pieces(self.state, WHITE):
-            print(black_to_white_distance/n_pieces(self.state, WHITE))
+
         h = black_counter + white_counter #+ WEIGHT * black_to_white_distance
 
-        print(h)
+        # print(h)
 
         return h
 
