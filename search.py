@@ -12,6 +12,8 @@ from collections import deque, Counter
 import numpy as np
 
 
+# Following code modified from the AI: A Modern Approach Code repository found: https://github.com/aimacode/aima-python
+
 # AIMA class
 class Problem:
     """The abstract class for a formal problem. You should subclass
@@ -119,7 +121,7 @@ class Expendibots(Problem):
 
     def h(self, node):
         white_counter = 12
-        black_counter,  white_piece_density, black_to_white_distance = 0
+        black_counter, white_piece_density, black_to_white_distance = 0
         WEIGHT = 2
         """ The search function chooses the node with the smallest heuristic value first. 
         We want to explore nodes with the minimum number of black tokens first and the highest number of white tokens? 
@@ -178,8 +180,6 @@ class Node:
         self.depth = 0
         if parent:
             self.depth = parent.depth + 1
-    
-        
 
     def __repr__(self):
         return "<Node {}>".format(self.state)
@@ -216,8 +216,7 @@ class Node:
             else:
                 white_counter -= self.state[key1].h
 
-
-        h = black_counter + white_counter #+ WEIGHT * black_to_white_distance
+        h = black_counter + white_counter  # + WEIGHT * black_to_white_distance
 
         # print(h)
 
@@ -230,7 +229,7 @@ class Node:
             # action.print_action()  # ah so here is where the print statement is! -> it reveals that all the same actions are generated repeatedly
             child = self.child_node(problem, action)
 
-            child.repeated_states() #checks path to node and counts repeated states
+            child.repeated_states()  # checks path to node and counts repeated states
             # check number of repeats prior to appending child to children
             if not (child.repeats >= 2 or child.depth > 250):  # remove those that repeat a state four times
                 children.append(child)
@@ -270,7 +269,7 @@ class Node:
         node = self.parent
         # at first finding of an equal node state, return the number of repeats stored in that node
         while node:
-            if dict_equal(node.state,this_state) :
+            if dict_equal(node.state, this_state):
                 counter += 1
             node = node.parent
         self.repeats = counter
@@ -329,7 +328,7 @@ def recursive_best_first_search(problem, h=None):
 
 # ______________________________________________________________________________
 
-
+#This class and function where not taken from AIMA
 class Action:
 
     # actiontype is assumed to be either the constant MOVE or BOOM
@@ -361,8 +360,9 @@ def dict_equal(dict1, dict2):
 
     # return True if the dicts passed the checks
     return True
+# ______________________________________________________________________________
 
-#AIMA function
+# AIMA function
 def breadth_first_tree_search(problem):
     """
     [Figure 3.7]
@@ -390,6 +390,7 @@ def breadth_first_tree_search(problem):
 
     print("why can't we find the solution :((( ")
     return None
+
 
 # ______________________________________________________________________________
 
@@ -421,6 +422,7 @@ def iterative_deepening_search(problem):
         result = depth_limited_search(problem, depth)
         if result != 'cutoff':
             return result
+
 
 # ______________________________________________________________________________
 
