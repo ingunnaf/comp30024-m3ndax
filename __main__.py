@@ -1,6 +1,5 @@
 import sys
 import json
-import timeit
 
 from search import *
 
@@ -13,17 +12,15 @@ def main():
 
     problem = Expendibots(my_board, None)
 
-    start = timeit.default_timer()
-
     solution_node2 = recursive_best_first_search(problem)
 
     for node in solution_node2.path()[1:]:
         action = node.action
         action.print_action()
 
-    stop = timeit.default_timer()
 
-    print("time: " + str(stop - start))
+
+
 
 
 if __name__ == '__main__':
