@@ -393,7 +393,7 @@ def breadth_first_tree_search(problem):
 
 
 # ______________________________________________________________________________
-
+# Following code modified from the AI: A Modern Approach Code repository found: https://github.com/aimacode/aima-python
 def depth_limited_search(problem, limit=250):
     """[Figure 3.17]"""
 
@@ -425,7 +425,7 @@ def iterative_deepening_search(problem):
 
 
 # ______________________________________________________________________________
-
+# Following code modified from the AI: A Modern Approach Code repository found: https://github.com/aimacode/aima-python
 def recursive_best_first_search(problem, h=None):
     """[Figure 3.26]"""
     h = memoize(h or problem.h, 'h')
