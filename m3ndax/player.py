@@ -31,12 +31,7 @@ class ExamplePlayer:
         strings "white" or "black" correspondingly.
         """
         # Set up state representation
-        self.board = dict()
-        for xy in _BLACK_START_SQUARES: 
-            self.board[xy] = Piece(BLACK, 1)
-        for xy in _WHITE_START_SQUARES:
-            self.board[xy] = Piece(WHITE, 1)
-
+        self.board = create_board(_BLACK_START_SQUARES, _WHITE_START_SQUARES)
         self.colour = colour
 
 
@@ -80,6 +75,13 @@ class ExamplePlayer:
         """
         # TODO: Update state representation in response to action.
 
+def create_board(black_start_squares, white_start_squares) : 
+    board = dict()
+    for xy in black_start_squares: 
+            self.board[xy] = Piece(BLACK, 1)
+        for xy in white_start_squares:
+            self.board[xy] = Piece(WHITE, 1)
+    return board
 
 class Expendibots: 
 
