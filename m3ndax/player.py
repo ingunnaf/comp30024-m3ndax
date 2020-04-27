@@ -48,7 +48,11 @@ class ExamplePlayer:
         # Placeholder: just returns a valid action
         # Consults Expendibots class to determine what valid actions are?
 
-        return ("BOOM", (0, 0))
+        #for testing purposes to see that init and update methods work as intended, 
+        # this for loop looks for a token in our colour and says to boom this token
+        for square in self.board.keys(): 
+            if self.board[square].col == self.colour :
+                return ("BOOM", square)
 
 
     def update(self, colour, action):
@@ -116,7 +120,7 @@ def boom(origin, my_board):
     return my_board
 
 def move_token(n, a, b, board):
-        ret_board = board.copy()
+        ret_board = copy.deepcopy(board)
         # check if move is valid
         """if not valid_move(n, a, b, board):
             return board""" #i commented this out because at the moment, we don't need to validate 
