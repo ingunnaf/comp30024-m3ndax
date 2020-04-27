@@ -13,8 +13,8 @@ _WHITE_START_SQUARES = [(0,1), (1,1),   (3,1), (4,1),   (6,1), (7,1),
     """
 Piece = namedtuple('P', 'col h')
 # define static variables
-BLACK = 'b'
-WHITE = 'w'
+BLACK = 'black'
+WHITE = 'white'
 BOOM = "boom"
 MOVE = "move"
 
@@ -33,7 +33,6 @@ class ExamplePlayer:
         # Set up state representation
         self.board = create_board(_BLACK_START_SQUARES, _WHITE_START_SQUARES)
         self.colour = colour
-
 
 
     def action(self):
@@ -73,7 +72,23 @@ class ExamplePlayer:
         for the player colour (your method does not need to validate the action
         against the game rules).
         """
+
+        action_type = action[0]
+
+        if action_type == "BOOM": # action is a BOOM
+            origin = action[1]
+            self.board = boom(origin, self.board)
+        
+        else: # action is a MOVE
+            n = action[1]
+            loc_a = action[2]
+            loc_b = action[3]
+
+            self.board = move_token(n, loc_a, loc_b)
+
+
         # TODO: Update state representation in response to action.
+
 
 def create_board(black_start_squares, white_start_squares) : 
     board = dict()
@@ -82,6 +97,61 @@ def create_board(black_start_squares, white_start_squares) :
         for xy in white_start_squares:
             self.board[xy] = Piece(WHITE, 1)
     return board
+
+
+def boom(origin, my_board):
+
+    x, y = origin[0], origin[1]
+    my_range = 1
+
+    del my_board[origin]
+
+    right_limit = x + my_range + 1
+    left_limit = x - my_range
+    up_limit = y + my_range + 1
+    down_limit = y - my_range
+
+    for i in range(left_limit, right_limit):
+        for j in range(down_limit, up_limit):
+            if (i, j) in my_board:
+                boom((i,j), my_board)
+
+    return my_board
+
+def move_token(n, a, b, board):
+        ret_board = board.copy()
+        # check if move is valid
+        if not valid_move(n, a, b, board):
+            return board
+
+        # handle case where there is already a token at loc b (stack new tokens on top)
+        if b in ret_board:
+            current_height_b = ret_board[b].h
+            new_height_b = current_height_b + n
+            ret_board[b] = Piece("w", new_height_b)
+        else:  # loc b has no tokens yet so we can just put our new tokens there
+            ret_board[b] = Piece("w", n)
+
+        # handle potential remaining tokens at loc a
+        current_height_a = ret_board[a].h
+        new_height_a = current_height_a - n
+        if new_height_a == 0:
+            # no more tokens left at loc a
+            del ret_board[a]
+        else:
+            ret_board[a] = Piece("w", new_height_a)
+
+        # done
+        return ret_board
+
+
+# everything above this line is used by the player class
+# ******************************************************************************************************************************************
+# ******************************************************************************************************************************************
+# ******************************************************************************************************************************************
+# everything below this line is just here for reference at the moment
+
+
 
 class Expendibots: 
 
@@ -160,31 +230,7 @@ class Expendibots:
         return True
 
 
-    def move_token(self, n, a, b, board):
-        ret_board = board.copy()
-        # check if move is valid
-        if not valid_move(n, a, b, board):
-            return board
-
-        # handle case where there is already a token at loc b (stack new tokens on top)
-        if b in ret_board:
-            current_height_b = ret_board[b].h
-            new_height_b = current_height_b + n
-            ret_board[b] = Piece("w", new_height_b)
-        else:  # loc b has no tokens yet so we can just put our new tokens there
-            ret_board[b] = Piece("w", n)
-
-        # handle potential remaining tokens at loc a
-        current_height_a = ret_board[a].h
-        new_height_a = current_height_a - n
-        if new_height_a == 0:
-            # no more tokens left at loc a
-            del ret_board[a]
-        else:
-            ret_board[a] = Piece("w", new_height_a)
-
-        # done
-        return ret_board
+    
 
 
     def valid_boom(self, origin, my_board):
@@ -210,27 +256,7 @@ class Expendibots:
         return ret_board
 
 
-    def boom(self, origin, my_board):
-        if not valid_boom(origin, my_board):
-            raise RuntimeError("Invalid Boom")
-
-        else:
-            x, y = origin[0], origin[1]
-            my_range = 1
-
-            del my_board[origin]
-
-            right_limit = x + my_range + 1
-            left_limit = x - my_range
-            up_limit = y + my_range + 1
-            down_limit = y - my_range
-
-            for i in range(left_limit, right_limit):
-                for j in range(down_limit, up_limit):
-                    if (i, j) in my_board:
-                        boom((i,j), my_board)
-
-        return my_board
+    
 
 
     def n_pieces(self, board, piece_col):
