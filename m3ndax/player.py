@@ -6,12 +6,9 @@ _BLACK_START_SQUARES = [(0,7), (1,7),   (3,7), (4,7),   (6,7), (7,7),
 _WHITE_START_SQUARES = [(0,1), (1,1),   (3,1), (4,1),   (6,1), (7,1),
                         (0,0), (1,0),   (3,0), (4,0),   (6,0), (7,0)]
 
-"""
-    create namedtuple representing a piece
-    where col represent the colour (either 'b' for black or 'w' for white)
-    and h is the height of the stack (minimum 1)
-    """
+# col = colour, h = height
 Piece = namedtuple('P', 'col h')
+
 # define static variables
 BLACK = 'black'
 WHITE = 'white'
@@ -84,7 +81,7 @@ class ExamplePlayer:
             loc_a = action[2]
             loc_b = action[3]
 
-            self.board = move_token(n, loc_a, loc_b)
+            self.board = move_token(n, loc_a, loc_b, self.board)
 
 
         # TODO: Update state representation in response to action.
@@ -93,9 +90,9 @@ class ExamplePlayer:
 def create_board(black_start_squares, white_start_squares) : 
     board = dict()
     for xy in black_start_squares: 
-            self.board[xy] = Piece(BLACK, 1)
-        for xy in white_start_squares:
-            self.board[xy] = Piece(WHITE, 1)
+        board[xy] = Piece(BLACK, 1)
+    for xy in white_start_squares:
+        board[xy] = Piece(WHITE, 1)
     return board
 
 
@@ -121,8 +118,9 @@ def boom(origin, my_board):
 def move_token(n, a, b, board):
         ret_board = board.copy()
         # check if move is valid
-        if not valid_move(n, a, b, board):
-            return board
+        """if not valid_move(n, a, b, board):
+            return board""" #i commented this out because at the moment, we don't need to validate 
+            #the action given to us for update method in player class
 
         # handle case where there is already a token at loc b (stack new tokens on top)
         if b in ret_board:
