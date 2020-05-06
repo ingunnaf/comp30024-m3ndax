@@ -51,7 +51,7 @@ class ExamplePlayer:
         #for testing purposes to see that init and update methods work as intended,
         # this for loop looks for a token in our colour and says to boom this token
         for square in self.board.keys():
-            if self.board[square].col == self.colour :
+            if self.board[square].col == self.colour:
                 return ("BOOM", square)
 
 
