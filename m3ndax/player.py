@@ -1,5 +1,9 @@
 from collections import namedtuple
 import copy
+GameState = namedtuple('GameState', 'to_move, utility, board, moves')
+
+UTILITYPLACEHOLDER 0
+
 
 _BLACK_START_SQUARES = [(0,7), (1,7),   (3,7), (4,7),   (6,7), (7,7),
                         (0,6), (1,6),   (3,6), (4,6),   (6,6), (7,6)]
@@ -28,7 +32,11 @@ class ExamplePlayer:
         strings "white" or "black" correspondingly.
         """
         # Set up state representation
-        self.board = create_board(_BLACK_START_SQUARES, _WHITE_START_SQUARES)
+        board = create_board(_BLACK_START_SQUARES, _WHITE_START_SQUARES)
+        # what is the moves supposed to hold? 
+        # sets up our internal representation of a game
+        self.gamestate = new GameState(WHITE, UTILITYPLACEHOLDER, board, None)
+        # our player colour
         self.colour = colour
 
 
