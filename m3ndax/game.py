@@ -115,18 +115,15 @@ class Expendibots(Game):
     def actions(self, state):
         """Return a list of the allowable moves at this point."""
 
-        """ #TODO The below is just copied from Part A, need to modify to allow for game state to 
-        store whose turn it is"""
-
         board = state.board
         possible_actions = []
 
         for key in board:
-            # for each white token
-            if board[key].col == WHITE:
+            # for each players tokens whose turn it is
+            if board[key].col == state.colour:
 
                 # one possible action is to boom the white token
-                boom = ("BOOM", key)
+                boom = (BOOM, key)
                 possible_actions.append(boom)
 
                 my_range = board[key].h
@@ -139,7 +136,7 @@ class Expendibots(Game):
 
                             # if move is valid, add it to the possible_actions
                             if valid_move(n, key, (x, y), board):
-                                move = ("MOVE", n, key, (x,y))
+                                move = (MOVE, n, key, (x,y))
                                 possible_actions.append(move)
 
         return possible_actions
@@ -149,11 +146,12 @@ class Expendibots(Game):
         """ Also just copied from part A at the moment, needs to be modified"""
         #TODO modify this method to be used for part B instead of part A
 
-        my_type = action.action_type
-        local_board = copy.deepcopy(board)
+        movetype = move[0]
+        
+        local_board = copy.deepcopy(state.board)
 
-        if my_type == BOOM:
-            return boom_piece(action.loc_a, local_board)  # returns a new boomed board
+        if movetype == BOOM:
+            return boom_piece(move[1], local_board)  # returns a new boomed board
 
         else:
             return move_token(action.n, action.loc_a, action.loc_b, local_board)  # returns a new moved board
@@ -165,8 +163,18 @@ class Expendibots(Game):
 
     def terminal_test(self, state):
         """Return True if this is a final state for the game."""
-        #TODO either ensure that self.actions can be used as it is below, OR make a new terminal test
-        return not self.actions(state)
+        black = False
+        white = False
+
+        board = state.board
+
+        for key in board: 
+            if board[key].col == WHITE: 
+                white = True
+            if board[key].col == BLACK:
+                black = True
+        
+        return black and white
 
     def to_move(self, state):
         """Return the player whose move it is in this state."""
@@ -192,3 +200,37 @@ class Expendibots(Game):
                 if self.terminal_test(state):
                     self.display(state)
                     return self.utility(state, self.to_move(self.initial))
+
+
+######################################## functions relating to game and board below ####################################
+
+
+def boom(origin, my_board):
+    if not valid_boom(origin, my_board):
+        raise RuntimeError("Invalid Boom")
+
+    else:
+        x, y = origin[0], origin[1]
+        my_range = 1
+
+        del my_board[origin]
+
+        right_limit = x + my_range + 1
+        left_limit = x - my_range
+        up_limit = y + my_range + 1
+        down_limit = y - my_range
+
+        for i in range(left_limit, right_limit):
+            for j in range(down_limit, up_limit):
+                if (i, j) in my_board:
+                    boom((i,j), my_board)
+
+    return my_board
+
+def boom_piece(origin, init_board):
+    if not valid_boom(origin, init_board):
+        raise RuntimeError("Invalid Boom Move")
+
+    ret_board = copy.deepcopy(init_board)
+    boom(origin, ret_board)
+    return ret_board
