@@ -92,6 +92,7 @@ class Game:
         return '<{}>'.format(self.__class__.__name__)
 
     def play_game(self, *players):
+        #TODO: figure out whether this method can be removed
         """Play an n-person, move-alternating game."""
         state = self.initial
         while True:
