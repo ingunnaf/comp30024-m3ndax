@@ -158,8 +158,21 @@ class Expendibots(Game):
         
 
     def utility(self, state, player):
-        """Return the value of this final state to player."""
+        """Returns a negative value if we have lost, a positive value if we won, and a 0 if it is a tie. """
         #TODO figure out how to use utility function? :-) 
+        ourcolour = player.colour
+        board = state.board
+
+        """ If there is at least one remaining token in our colour and the game has ended, we have won"""
+        for key in board: 
+            if board[key].col == ourcolour: 
+                return 1
+            else: 
+                # a token of another colour was found
+                return -1
+        #otherwise (if there no tokens of any colour) return neutral value 0
+        return 0
+
 
     def terminal_test(self, state):
         """Return True if this is a final state for the game."""
@@ -330,3 +343,42 @@ def move_token(n, a, b, board):
 
         # done
         return ret_board
+
+
+
+
+
+
+
+
+
+
+
+#################### functions that are not in use at the moment, just here for reference: #############
+
+
+def manhat_dist(a, b):
+    """returns the number of cardinal moves a piece would have to make to reach the other piece
+    """
+    x1, x2 = a[0], b[0]
+    y1, y2 = a[1], b[1]
+
+    dist = (abs(x1 - x2)) + (abs(y1 - y2))
+
+    return dist
+
+
+def n_pieces(board, piece_col):
+    """
+    counts how many pieces of the given colour are on the board
+    """
+    coords = [(x, 7 - y) for y in range(8) for x in range(8)]
+
+    cnt = 0
+
+    for xy in coords:
+        if xy in board:
+            if board[xy].col == piece_col:
+                cnt += board[xy].h
+
+    return cnt
