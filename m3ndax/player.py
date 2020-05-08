@@ -1,5 +1,6 @@
 from collections import namedtuple
 import copy
+from util import *
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
 
 UTILITYPLACEHOLDER 0
@@ -84,19 +85,18 @@ class ExamplePlayer:
 
         action_type = action[0]
 
-        if action_type == "BOOM": # action is a BOOM
+        if action_type == BOOM: # action is a BOOM
             origin = action[1]
-            self.board = boom(origin, self.board)
+            self.gamestate.board = boom(origin, self.board)
 
         else: # action is a MOVE
             n = action[1]
             loc_a = action[2]
             loc_b = action[3]
 
-            self.board = move_token(n, loc_a, loc_b, self.board)
+            self.gamestate.board = move_token(n, loc_a, loc_b, self.board)
 
 
-        # TODO: Update state representation in response to action.
 
 
 
