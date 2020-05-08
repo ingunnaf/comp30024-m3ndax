@@ -203,6 +203,61 @@ class Expendibots(Game):
 
 ######################################## functions relating to game and board below ####################################
 
+def valid_move(n, a, b, board):
+    # not valid if there is no token at a
+    if a not in board:
+        return False
+
+    # not valid if a == b (the token isn't moving)
+    if (a == b):
+        return False
+
+    # not valid if move is diagonal
+    if (a[0] != b[0]) and (a[1] != b[1]):
+        # print("you cannot move diagonally in a single move")
+        return False
+
+    # not valid if the token at loc a is black
+    if a in board:
+        if board[a].col == BLACK:
+            # print("you can't move a black token")
+            return False
+
+    # not valid if less than n tokens at loc a
+    if board[(a)].h < n:
+        # print("you can't move more tokens than exist at loc a")
+        return False
+
+    # not valid if loc b is out of reach
+    my_range = board[(a)].h
+    dist = manhat_dist(a, b)
+    if (dist > my_range):
+        # print("loc b is out of reach")
+        return False
+
+    # not valid if there is a black token at loc b
+    if b in board:
+        if board[b].col == BLACK:
+            return False
+
+    # invalid if loc a or loc b are not in valid range
+    if a[0] not in range(0, 8):
+        # print("loc a not on board")
+        return False
+    if a[1] not in range(0, 8):
+        # print("loc a not on board")
+        return False
+    if b[0] not in range(0, 8):
+        # print("loc b not on board")
+        return False
+    if b[1] not in range(0, 8):
+        # print("loc b not on board")
+        return False
+
+    # has passed all the checks, so we return true
+    return True
+
+
 def valid_boom(origin, my_board):
     if origin[0] not in range(0, 8):
         print("x coordinate not in range")
