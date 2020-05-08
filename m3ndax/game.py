@@ -117,6 +117,8 @@ class Expendibots(Game):
 
         """ #TODO The below is just copied from Part A, need to modify to allow for game state to 
         store whose turn it is"""
+
+        board = state.board
         possible_actions = []
 
         for key in board:
@@ -124,7 +126,7 @@ class Expendibots(Game):
             if board[key].col == WHITE:
 
                 # one possible action is to boom the white token
-                boom = Action(BOOM, 1, key, None)
+                boom = ("BOOM", key)
                 possible_actions.append(boom)
 
                 my_range = board[key].h
@@ -137,7 +139,8 @@ class Expendibots(Game):
 
                             # if move is valid, add it to the possible_actions
                             if valid_move(n, key, (x, y), board):
-                                possible_actions.append(Action(MOVE, n, key, (x, y)))
+                                move = ("MOVE", n, key, (x,y))
+                                possible_actions.append(move)
 
         return possible_actions
 
