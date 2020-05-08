@@ -178,7 +178,6 @@ class Expendibots(Game):
 
     def to_move(self, state):
         """Return the player whose move it is in this state."""
-        #TODO implement this method, also remember to add somewhere to store whose turn it is in game state 
         return state.to_move
 
     def display(self, state):
