@@ -154,7 +154,7 @@ class Expendibots(Game):
             return boom_piece(move[1], local_board)  # returns a new boomed board
 
         else:
-            return move_token(action.n, action.loc_a, action.loc_b, local_board)  # returns a new moved board
+            return move_token(move[1], move[2], move[3], local_board)  # returns a new moved board
         
 
     def utility(self, state, player):
@@ -203,6 +203,19 @@ class Expendibots(Game):
 
 ######################################## functions relating to game and board below ####################################
 
+def valid_boom(origin, my_board):
+    if origin[0] not in range(0, 8):
+        print("x coordinate not in range")
+        return False
+    if origin[1] not in range(0, 8):
+        print("y coordinate not in range")
+        return False
+    if origin not in my_board:
+        print("boom origin location has no token on it")
+        return False
+
+    return True
+
 
 def boom(origin, my_board):
     if not valid_boom(origin, my_board):
@@ -226,6 +239,7 @@ def boom(origin, my_board):
 
     return my_board
 
+
 def boom_piece(origin, init_board):
     if not valid_boom(origin, init_board):
         raise RuntimeError("Invalid Boom Move")
@@ -233,3 +247,31 @@ def boom_piece(origin, init_board):
     ret_board = copy.deepcopy(init_board)
     boom(origin, ret_board)
     return ret_board
+
+
+def move_token(n, a, b, board):
+        ret_board = copy.deepcopy(board)
+        # check if move is valid
+        """if not valid_move(n, a, b, board):
+            return board""" #i commented this out because at the moment, we don't need to validate
+            #the action given to us for update method in player class
+
+        # handle case where there is already a token at loc b (stack new tokens on top)
+        if b in ret_board:
+            current_height_b = ret_board[b].h
+            new_height_b = current_height_b + n
+            ret_board[b] = Piece("w", new_height_b)
+        else:  # loc b has no tokens yet so we can just put our new tokens there
+            ret_board[b] = Piece("w", n)
+
+        # handle potential remaining tokens at loc a
+        current_height_a = ret_board[a].h
+        new_height_a = current_height_a - n
+        if new_height_a == 0:
+            # no more tokens left at loc a
+            del ret_board[a]
+        else:
+            ret_board[a] = Piece("w", new_height_a)
+
+        # done
+        return ret_board
