@@ -10,5 +10,5 @@ from m3ndax.game import *
 from m3ndax.player import INIT_BOARD
 
 team_m3ndax = Player(WHITE, Expendibots())
-team_m3ndax.action()
-
+action1 = team_m3ndax.action()
+print(action1)

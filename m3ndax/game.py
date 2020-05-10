@@ -193,7 +193,7 @@ class Expendibots(Game):
     def utility(self, state, player):
         """Returns a negative value if we have lost, a positive value if we won, and a 0 if it is a tie. """
         # TODO figure out how to use utility function? :-) !!!
-        '''ourcolour = player.colour
+        ourcolour = player
         board = state.board
 
         """ If there is at least one remaining token in our colour and the game has ended, we have won"""
@@ -204,7 +204,7 @@ class Expendibots(Game):
                 # a token of another colour was found
                 return -1
         # otherwise (if there no tokens of any colour) return neutral value 0
-        return 0'''
+        return 0
 
     def terminal_test(self, state):
         """Return True if this is a final state for the game."""
