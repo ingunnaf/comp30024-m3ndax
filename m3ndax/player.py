@@ -3,7 +3,9 @@ from collections import namedtuple
 import copy
 
 # Import functions from local module
-from m3ndax.game import *
+#from m3ndax.game import *
+#from game import *
+import game as g
 
 # Define static variables
 UTILITYPLACEHOLDER: int = 0
@@ -14,7 +16,7 @@ _WHITE_START_SQUARES = [(0, 1), (1, 1), (3, 1), (4, 1), (6, 1), (7, 1),
                         (0, 0), (1, 0), (3, 0), (4, 0), (6, 0), (7, 0)]
 
 # define initial board
-INIT_BOARD = create_board(_BLACK_START_SQUARES, _WHITE_START_SQUARES)
+INIT_BOARD = g.create_board(_BLACK_START_SQUARES, _WHITE_START_SQUARES)
 
 
 class ExamplePlayer:
@@ -33,7 +35,7 @@ class ExamplePlayer:
 
         # Initialise game class (in our case the Expendibots class) and the board state
         self.game = game
-        self.state = GameState(WHITE, UTILITYPLACEHOLDER, INIT_BOARD, None)
+        self.state = g.GameState(g.WHITE, g.UTILITYPLACEHOLDER, INIT_BOARD, None)
 
         # our player colour
         self.colour = colour
@@ -62,7 +64,7 @@ class ExamplePlayer:
 
         # TODO: Currently returns two moves, need to find out why or determine which move in the tuple is better
         # Returns the best move to make by using the algorithm from game.py
-        return minmax_decision(self.state, self.game)
+        return g.minmax_decision(self.state, self.game)
         # TODO: ensure that the move is in the correct format for the referee
 
     def update(self, colour, action):
@@ -88,9 +90,9 @@ class ExamplePlayer:
         # TODO: implement this method properly (go over and check that it works)
         action_type = action[0]
 
-        if action_type == BOOM:  # action is a BOOM
+        if action_type == g.BOOM:  # action is a BOOM
             origin = action[1]
-            self.gamestate[2] = boom(origin, self.board)
+            placeholderstate = g.boom(origin, self.state[2])
 
 
         else:  # action is a MOVE
@@ -98,7 +100,11 @@ class ExamplePlayer:
             loc_a = action[2]
             loc_b = action[3]
 
-            self.gamestate[2] = move_token(n, loc_a, loc_b, self.board)
+            placeholderstate = g.move_token(n, loc_a, loc_b, self.state[2])
+
+        #update state
+        self.state = g.GameState(colour, g.UTILITYPLACEHOLDER, placeholderstate, action)
+
 
 
 # everything above this line is used by the player class at the moment, but this should probably be moved to game.py file

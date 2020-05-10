@@ -5,10 +5,17 @@
 # example import below, you can define it in another file and import
 # it into this module with the name 'Player':
 
-from m3ndax.player import ExamplePlayer as Player
-from m3ndax.game import *
-from m3ndax.player import INIT_BOARD
+#from m3ndax.player import ExamplePlayer as Player
+#from m3ndax.game import *
+#from m3ndax.player import INIT_BOARD
+from player import ExamplePlayer as Player
+from game import *
+from player import INIT_BOARD
 
 team_m3ndax = Player(WHITE, Expendibots())
 action1 = team_m3ndax.action()
+print(action1)
 
+team_m3ndax.update(BLACK, action1)
+
+print_board(team_m3ndax.state[2])

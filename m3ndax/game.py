@@ -1,7 +1,8 @@
 import copy
 from collections import namedtuple
 import numpy as np
-from m3ndax.util import print_board
+#from m3ndax.util import print_board
+from util import print_board
 
 # NamedTuple definitions
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
