@@ -84,12 +84,13 @@ class ExamplePlayer:
         :return: Nothing, just updates the game state
         """
 
+        # TODO: implement this method properly (go over and check that it works)
         action_type = action[0]
 
         if action_type == BOOM:  # action is a BOOM
             origin = action[1]
             self.gamestate[2] = boom(origin, self.board)
-            # print("boom")  # for Tate's own reference                                < --- TODO: Comment out
+
 
         else:  # action is a MOVE
             n = action[1]
@@ -97,7 +98,7 @@ class ExamplePlayer:
             loc_b = action[3]
 
             self.gamestate[2] = move_token(n, loc_a, loc_b, self.board)
-            # print("Move")  # for Tate's own reference                                < --- TODO: Comment out
+
 
 # everything above this line is used by the player class at the moment, but this should probably be moved to game.py file
 # ******************************************************************************************************************************************

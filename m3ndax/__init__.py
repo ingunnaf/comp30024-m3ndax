@@ -11,4 +11,4 @@ from m3ndax.player import INIT_BOARD
 
 team_m3ndax = Player(WHITE, Expendibots())
 action1 = team_m3ndax.action()
-print(action1)
+print(type action1)
