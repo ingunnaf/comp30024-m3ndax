@@ -5,14 +5,14 @@ from m3ndax.util import print_board
 
 # NamedTuple definitions
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
-Piece = namedtuple('P', 'col h') # col = colour, h = height
+Piece = namedtuple('P', 'col h')  # col = colour, h = height
 
 # Static Variable definitions
 BLACK = 'black'
 WHITE = 'white'
 BOOM = "boom"
 MOVE = "move"
-
+UTILITYPLACEHOLDER: int = 0
 
 # ______________________________________________________________________________
 # Algorithm taken from AIMA library: https://github.com/aimacode/aima-python/blob/master/games.py
@@ -175,23 +175,25 @@ class Expendibots(Game):
     def result(self, state, move):
         """Return the state that results from making a move from a state."""
         """ Also just copied from part A at the moment, needs to be modified"""
-        # TODO modify this method to be used for part B instead of part A
 
-        movetype = move[0]
+        moveType = move[0]
 
         local_board = copy.deepcopy(state.board)
 
-        if movetype == BOOM:
+        if moveType == BOOM:
             # TODO: return game state in GameState format  'to_move, utility, board, moves'
-            return boom_piece(move[1], local_board)  # returns a new boomed board
+            return GameState(self.to_move(state), UTILITYPLACEHOLDER, boom_piece(move[1], local_board),
+                             None)  # returns a new boomed board
 
         else:
-            return move_token(move[1], move[2], move[3], local_board)  # returns a new moved board
+            # TODO: return game state in GameState format  'to_move, utility, board, moves'
+            return GameState(self.to_move(state), UTILITYPLACEHOLDER, move_token(move[1], move[2], move[3], local_board),
+                             None)  # returns a new moved board
 
     def utility(self, state, player):
         """Returns a negative value if we have lost, a positive value if we won, and a 0 if it is a tie. """
-        # TODO figure out how to use utility function? :-)
-        ourcolour = player.colour
+        # TODO figure out how to use utility function? :-) !!!
+        ourcolour = player
         board = state.board
 
         """ If there is at least one remaining token in our colour and the game has ended, we have won"""
@@ -225,27 +227,13 @@ class Expendibots(Game):
 
     def display(self, state):
         """Print or otherwise display the state."""
-        # TODO maybe use the printing methods provided to us in Part A to print state of the game?
-        print_(state)
+        print_board(state[3])
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
-    def play_game(self, *players):
-        # TODO implement this method. The stuff currently here is just copied from the abstract implementation of Game
-        """Play an n-person, move-alternating game."""
-        state = self.initial
-        while True:
-            for player in players:
-                move = player(self, state)
-                state = self.result(state, move)
-                if self.terminal_test(state):
-                    self.display(state)
-                    return self.utility(state, self.to_move(self.initial))
-
 
 ######################################## functions relating to game and board below ####################################
-
 def valid_move(n, a, b, board):
     # not valid if there is no token at a
     if a not in board:
@@ -385,8 +373,6 @@ def create_board(black_start_squares, white_start_squares):
 
 
 #################### functions that are not in use at the moment, just here for reference: #############
-
-
 def manhat_dist(a, b):
     """returns the number of cardinal moves a piece would have to make to reach the other piece
     """

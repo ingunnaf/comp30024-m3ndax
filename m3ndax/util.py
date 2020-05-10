@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # TODO: Add or move utility functions here
 
 # TODO:put create_board method into expendibots class
@@ -9,6 +10,11 @@ def create_board(black_start_squares, white_start_squares) :
         board[xy] = Piece(WHITE, 1)
     return board
 
+=======
+'''
+Stores any extra utility classes and functions that we may need.
+'''
+>>>>>>> 0f5b0c7c2d7db0b3ba304b281c4fd5dfa44417ef
 
 
 def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
