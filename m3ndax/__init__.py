@@ -6,3 +6,7 @@
 # it into this module with the name 'Player':
 
 from m3ndax.player import ExamplePlayer as Player
+from m3ndax.game import *
+from m3ndax.util import *
+
+myplayer = Player(WHITE)

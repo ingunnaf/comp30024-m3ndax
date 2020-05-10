@@ -1,26 +1,28 @@
-
-
 import copy
-import itertools
-import random
 from collections import namedtuple
-
 import numpy as np
 
-from utils import vector_add
 
+# NamedTuple definitions
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
+# col = colour, h = height
+Piece = namedtuple('P', 'col h')
 
+# Static Variable definitions
+BLACK = 'black'
+WHITE = 'white'
+BOOM = "boom"
+MOVE = "move"
 
 # ______________________________________________________________________________
-
-
 def expect_minmax(state, game):
     """
     [Figure 5.11]
     Return the best move for a player after dice are thrown. The game tree
 	includes chance nodes along with min and max nodes.
 	"""
+
+
     player = game.to_move(state)
 
     def max_value(state):
@@ -54,7 +56,8 @@ def expect_minmax(state, game):
     # Body of expect_minmax:
     return max(game.actions(state), key=lambda a: chance_node(state, a), default=None)
 
-#AIMA class, examples of how to implement it on https://github.com/aimacode/aima-python/blob/master/games.py
+
+# AIMA class, examples of how to implement it on https://github.com/aimacode/aima-python/blob/master/games.py
 class Game:
     """A game is similar to a problem, but it has a utility for each
     state and a terminal test instead of a path cost and a goal
@@ -92,7 +95,7 @@ class Game:
         return '<{}>'.format(self.__class__.__name__)
 
     def play_game(self, *players):
-        #TODO: figure out whether this method can be removed
+        # TODO: figure out whether this method can be removed
         """Play an n-person, move-alternating game."""
         state = self.initial
         while True:
@@ -104,7 +107,7 @@ class Game:
                     return self.utility(state, self.to_move(self.initial))
 
 
-class Expendibots(Game): 
+class Expendibots(Game):
     """ Note to self/both of us : Given that the game class uses the state passed to all these 
     functions to determine things like whose turn it is to move, our previous version of a state that
     only stored the board without information like whose turn it is, is insufficient. I think it might
@@ -137,7 +140,7 @@ class Expendibots(Game):
 
                             # if move is valid, add it to the possible_actions
                             if valid_move(n, key, (x, y), board):
-                                move = (MOVE, n, key, (x,y))
+                                move = (MOVE, n, key, (x, y))
                                 possible_actions.append(move)
 
         return possible_actions
@@ -145,10 +148,10 @@ class Expendibots(Game):
     def result(self, state, move):
         """Return the state that results from making a move from a state."""
         """ Also just copied from part A at the moment, needs to be modified"""
-        #TODO modify this method to be used for part B instead of part A
+        # TODO modify this method to be used for part B instead of part A
 
         movetype = move[0]
-        
+
         local_board = copy.deepcopy(state.board)
 
         if movetype == BOOM:
@@ -156,24 +159,22 @@ class Expendibots(Game):
 
         else:
             return move_token(move[1], move[2], move[3], local_board)  # returns a new moved board
-        
 
     def utility(self, state, player):
         """Returns a negative value if we have lost, a positive value if we won, and a 0 if it is a tie. """
-        #TODO figure out how to use utility function? :-) 
+        # TODO figure out how to use utility function? :-)
         ourcolour = player.colour
         board = state.board
 
         """ If there is at least one remaining token in our colour and the game has ended, we have won"""
-        for key in board: 
-            if board[key].col == ourcolour: 
+        for key in board:
+            if board[key].col == ourcolour:
                 return 1
-            else: 
+            else:
                 # a token of another colour was found
                 return -1
-        #otherwise (if there no tokens of any colour) return neutral value 0
+        # otherwise (if there no tokens of any colour) return neutral value 0
         return 0
-
 
     def terminal_test(self, state):
         """Return True if this is a final state for the game."""
@@ -182,12 +183,12 @@ class Expendibots(Game):
 
         board = state.board
 
-        for key in board: 
-            if board[key].col == WHITE: 
+        for key in board:
+            if board[key].col == WHITE:
                 white = True
             if board[key].col == BLACK:
                 black = True
-        
+
         return black and white
 
     def to_move(self, state):
@@ -196,14 +197,14 @@ class Expendibots(Game):
 
     def display(self, state):
         """Print or otherwise display the state."""
-        #TODO maybe use the printing methods provided to us in Part A to print state of the game? 
+        # TODO maybe use the printing methods provided to us in Part A to print state of the game?
         print(state)
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
     def play_game(self, *players):
-        #TODO implement this method. The stuff currently here is just copied from the abstract implementation of Game
+        # TODO implement this method. The stuff currently here is just copied from the abstract implementation of Game
         """Play an n-person, move-alternating game."""
         state = self.initial
         while True:
@@ -304,7 +305,7 @@ def boom(origin, my_board):
         for i in range(left_limit, right_limit):
             for j in range(down_limit, up_limit):
                 if (i, j) in my_board:
-                    boom((i,j), my_board)
+                    boom((i, j), my_board)
 
     return my_board
 
@@ -319,43 +320,45 @@ def boom_piece(origin, init_board):
 
 
 def move_token(n, a, b, board):
-        ret_board = copy.deepcopy(board)
-        # check if move is valid
-        """if not valid_move(n, a, b, board):
-            return board""" #i commented this out because at the moment, we don't need to validate
-            #the action given to us for update method in player class
+    ret_board = copy.deepcopy(board)
+    # check if move is valid
+    """if not valid_move(n, a, b, board):
+            return board"""  # i commented this out because at the moment, we don't need to validate
+    # the action given to us for update method in player class
 
-        # handle case where there is already a token at loc b (stack new tokens on top)
-        if b in ret_board:
-            current_height_b = ret_board[b].h
-            new_height_b = current_height_b + n
-            ret_board[b] = Piece("w", new_height_b)
-        else:  # loc b has no tokens yet so we can just put our new tokens there
-            ret_board[b] = Piece("w", n)
+    # handle case where there is already a token at loc b (stack new tokens on top)
+    if b in ret_board:
+        current_height_b = ret_board[b].h
+        new_height_b = current_height_b + n
+        ret_board[b] = Piece("w", new_height_b)
+    else:  # loc b has no tokens yet so we can just put our new tokens there
+        ret_board[b] = Piece("w", n)
 
-        # handle potential remaining tokens at loc a
-        current_height_a = ret_board[a].h
-        new_height_a = current_height_a - n
-        if new_height_a == 0:
-            # no more tokens left at loc a
-            del ret_board[a]
-        else:
-            ret_board[a] = Piece("w", new_height_a)
+    # handle potential remaining tokens at loc a
+    current_height_a = ret_board[a].h
+    new_height_a = current_height_a - n
+    if new_height_a == 0:
+        # no more tokens left at loc a
+        del ret_board[a]
+    else:
+        ret_board[a] = Piece("w", new_height_a)
 
-        # done
-        return ret_board
-
-
+    # done
+    return ret_board
 
 
-
-
-
-
-
+def create_board(black_start_squares, white_start_squares):
+    board = dict()
+    for xy in black_start_squares:
+        board[xy] = Piece(BLACK, 1)
+    for xy in white_start_squares:
+        board[xy] = Piece(WHITE, 1)
+    return board
 
 
 #################### functions that are not in use at the moment, just here for reference: #############
+
+
 
 
 def manhat_dist(a, b):
@@ -371,15 +374,14 @@ def manhat_dist(a, b):
 
 def n_pieces(board, piece_col):
     """
-    counts how many pieces of the given colour are on the board
+    Counts how many pieces of the given colour are on the board
     """
     coords = [(x, 7 - y) for y in range(8) for x in range(8)]
 
     cnt = 0
 
     for xy in coords:
-        if xy in board:
-            if board[xy].col == piece_col:
-                cnt += board[xy].h
+        if xy in board and board[xy].col == piece_col:
+            cnt += board[xy].h
 
     return cnt

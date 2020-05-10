@@ -1,24 +1,19 @@
+# Remote imports
 from collections import namedtuple
 import copy
-from util import *
-GameState = namedtuple('GameState', 'to_move, utility, board, moves')
 
-UTILITYPLACEHOLDER 0
+# Import functions from local module
+from m3ndax.game import *
+from m3ndax.util import *
 
-
-_BLACK_START_SQUARES = [(0,7), (1,7),   (3,7), (4,7),   (6,7), (7,7),
-                        (0,6), (1,6),   (3,6), (4,6),   (6,6), (7,6)]
-_WHITE_START_SQUARES = [(0,1), (1,1),   (3,1), (4,1),   (6,1), (7,1),
-                        (0,0), (1,0),   (3,0), (4,0),   (6,0), (7,0)]
-
-# col = colour, h = height
-Piece = namedtuple('P', 'col h')
+_BLACK_START_SQUARES = [(0, 7), (1, 7), (3, 7), (4, 7), (6, 7), (7, 7),
+                        (0, 6), (1, 6), (3, 6), (4, 6), (6, 6), (7, 6)]
+_WHITE_START_SQUARES = [(0, 1), (1, 1), (3, 1), (4, 1), (6, 1), (7, 1),
+                        (0, 0), (1, 0), (3, 0), (4, 0), (6, 0), (7, 0)]
 
 # define static variables
-BLACK = 'black'
-WHITE = 'white'
-BOOM = "boom"
-MOVE = "move"
+UTILITYPLACEHOLDER: int = 0
+
 
 class ExamplePlayer:
     def __init__(self, colour):
@@ -34,12 +29,13 @@ class ExamplePlayer:
         """
         # Set up state representation
         board = create_board(_BLACK_START_SQUARES, _WHITE_START_SQUARES)
+
         # what is the moves supposed to hold? 
         # sets up our internal representation of a game
-        self.gamestate = new GameState(WHITE, UTILITYPLACEHOLDER, board, None)
+        self.gamestate = GameState(WHITE, UTILITYPLACEHOLDER, board, None)
+
         # our player colour
         self.colour = colour
-
 
     def action(self):
         """
@@ -51,18 +47,16 @@ class ExamplePlayer:
         represented based on the spec's instructions for representing actions.
         """
 
-
         # TODO: Decide what action to take, and return it
 
         # Placeholder: just returns a valid action
         # Consults Expendibots class to determine what valid actions are?
 
-        #for testing purposes to see that init and update methods work as intended,
+        # for testing purposes to see that init and update methods work as intended,
         # this for loop looks for a token in our colour and says to boom this token
         for square in self.board.keys():
             if self.board[square].col == self.colour:
                 return ("BOOM", square)
-
 
     def update(self, colour, action):
         """
@@ -85,21 +79,16 @@ class ExamplePlayer:
 
         action_type = action[0]
 
-        if action_type == BOOM: # action is a BOOM
+        if action_type == BOOM:  # action is a BOOM
             origin = action[1]
             self.gamestate.board = boom(origin, self.board)
 
-        else: # action is a MOVE
+        else:  # action is a MOVE
             n = action[1]
             loc_a = action[2]
             loc_b = action[3]
 
             self.gamestate.board = move_token(n, loc_a, loc_b, self.board)
-
-
-
-
-
 
 # everything above this line is used by the player class at the moment, but this should probably be moved to game.py file
 # ******************************************************************************************************************************************
