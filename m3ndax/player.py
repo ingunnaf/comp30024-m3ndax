@@ -60,9 +60,10 @@ class ExamplePlayer:
             if self.game.board[square].col == self.colour:
                 return "BOOM", square'''
 
-        # TODO: Decide what action to take, and return it
+        # TODO: Currently returns two moves, need to find out why or determine which move in the tuple is better
         # Returns the best move to make by using the algorithm from game.py
         return minmax_decision(self.state, self.game)
+        # TODO: ensure that the move is in the correct format for the referee
 
     def update(self, colour, action):
         """
