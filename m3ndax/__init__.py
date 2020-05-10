@@ -6,3 +6,14 @@
 # it into this module with the name 'Player':
 
 from m3ndax.player import ExamplePlayer as Player
+from m3ndax.player import UTILITYPLACEHOLDER, GameState, _BLACK_START_SQUARES, _WHITE_START_SQUARES
+from m3ndax.game import *
+from m3ndax.util import *
+
+myExpendibots = Expendibots()
+
+board = create_board(_BLACK_START_SQUARES, _WHITE_START_SQUARES)
+
+my_gamestate = GameState(WHITE, UTILITYPLACEHOLDER, board, None)
+
+minmax_decision(my_gamestate, myExpendibots)
