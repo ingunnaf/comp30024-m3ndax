@@ -4,15 +4,6 @@ import copy
 
 # Import functions from local module
 from m3ndax.game import *
-from m3ndax.util import *
-
-_BLACK_START_SQUARES = [(0, 7), (1, 7), (3, 7), (4, 7), (6, 7), (7, 7),
-                        (0, 6), (1, 6), (3, 6), (4, 6), (6, 6), (7, 6)]
-_WHITE_START_SQUARES = [(0, 1), (1, 1), (3, 1), (4, 1), (6, 1), (7, 1),
-                        (0, 0), (1, 0), (3, 0), (4, 0), (6, 0), (7, 0)]
-
-# define static variables
-UTILITYPLACEHOLDER: int = 0
 
 
 class ExamplePlayer:

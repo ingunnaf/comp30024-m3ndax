@@ -12,6 +12,12 @@ BLACK = 'black'
 WHITE = 'white'
 BOOM = "boom"
 MOVE = "move"
+UTILITYPLACEHOLDER: int = 0
+
+_BLACK_START_SQUARES = [(0, 7), (1, 7), (3, 7), (4, 7), (6, 7), (7, 7),
+                        (0, 6), (1, 6), (3, 6), (4, 6), (6, 6), (7, 6)]
+_WHITE_START_SQUARES = [(0, 1), (1, 1), (3, 1), (4, 1), (6, 1), (7, 1),
+                        (0, 0), (1, 0), (3, 0), (4, 0), (6, 0), (7, 0)]
 
 
 # ______________________________________________________________________________
@@ -143,6 +149,10 @@ class Expendibots(Game):
 
     """ Implements the game class to model Expendibots """
 
+    def __init__(self):
+        init_board = create_board(_BLACK_START_SQUARES, _WHITE_START_SQUARES)
+        self.state = GameState(WHITE, UTILITYPLACEHOLDER, init_board, None)
+
     def actions(self, state):
         """Return a list of the allowable moves at this point."""
 
@@ -175,18 +185,18 @@ class Expendibots(Game):
     def result(self, state, move):
         """Return the state that results from making a move from a state."""
         """ Also just copied from part A at the moment, needs to be modified"""
-        # TODO modify this method to be used for part B instead of part A
 
-        movetype = move[0]
+        moveType = move[0]
 
         local_board = copy.deepcopy(state.board)
 
-        if movetype == BOOM:
+        if moveType == BOOM:
             # TODO: return game state in GameState format  'to_move, utility, board, moves'
-            return boom_piece(move[1], local_board)  # returns a new boomed board
+            return GameState(self.to_move(), UTILITYPLACEHOLDER, boom_piece(move[1], local_board), None)  # returns a new boomed board
 
         else:
-            return move_token(move[1], move[2], move[3], local_board)  # returns a new moved board
+            # TODO: return game state in GameState format  'to_move, utility, board, moves'
+            return GameState(self.to_move(), UTILITYPLACEHOLDER, move_token(move[1], move[2], move[3], local_board), None)  # returns a new moved board
 
     def utility(self, state, player):
         """Returns a negative value if we have lost, a positive value if we won, and a 0 if it is a tie. """
@@ -226,7 +236,7 @@ class Expendibots(Game):
     def display(self, state):
         """Print or otherwise display the state."""
         # TODO maybe use the printing methods provided to us in Part A to print state of the game?
-        print_(state)
+        print_board(state[3])
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
