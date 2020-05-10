@@ -1,5 +1,6 @@
-# TODO: Add or move utility functions here
-# TODO:put create_board method into expendibots class
+'''
+Stores any extra utility classes and functions that we may need.
+'''
 
 
 def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):

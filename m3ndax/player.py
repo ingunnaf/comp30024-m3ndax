@@ -5,6 +5,17 @@ import copy
 # Import functions from local module
 from m3ndax.game import *
 
+# Define static variables
+UTILITYPLACEHOLDER: int = 0
+
+_BLACK_START_SQUARES = [(0, 7), (1, 7), (3, 7), (4, 7), (6, 7), (7, 7),
+                        (0, 6), (1, 6), (3, 6), (4, 6), (6, 6), (7, 6)]
+_WHITE_START_SQUARES = [(0, 1), (1, 1), (3, 1), (4, 1), (6, 1), (7, 1),
+                        (0, 0), (1, 0), (3, 0), (4, 0), (6, 0), (7, 0)]
+
+# define initial board
+INIT_BOARD = create_board(_BLACK_START_SQUARES, _WHITE_START_SQUARES)
+
 
 class ExamplePlayer:
     def __init__(self, colour, game):
@@ -17,17 +28,12 @@ class ExamplePlayer:
         The parameter colour will be a string representing the player your 
         program will play as (White or Black). The value will be one of the 
         strings "white" or "black" correspondingly.
+        :return: it's a constructor and returns nothing
         """
 
-        # TODO: create Expendibots class
+        # Initialise game class (in our case the Expendibots class) and the board state
         self.game = game
-
-        # Set up state representation
-        board = create_board(_BLACK_START_SQUARES, _WHITE_START_SQUARES)
-
-        # what is the moves supposed to hold? 
-        # sets up our internal representation of a game
-        self.gamestate = GameState(WHITE, UTILITYPLACEHOLDER, board, None)
+        self.state = GameState(WHITE, UTILITYPLACEHOLDER, INIT_BOARD, None)
 
         # our player colour
         self.colour = colour
@@ -40,19 +46,23 @@ class ExamplePlayer:
         Based on the current state of the game, your player should select and 
         return an allowed action to play on this turn. The action must be
         represented based on the spec's instructions for representing actions.
+        :return: ("MOVE", n, (Xa, Ya), (Xb, Yb)) OR ("BOOM", (x, y))
         """
 
+
+
+        ''' Placeholder: just returns a valid action
+        Consults Expendibots class to determine what valid actions are?
+        for testing purposes to see that init and update methods work as intended,
+        this for loop looks for a token in our colour and says to boom this token
+        
+        for square in self.game.board.keys():
+            if self.game.board[square].col == self.colour:
+                return "BOOM", square'''
+
         # TODO: Decide what action to take, and return it
-
-        # Placeholder: just returns a valid action
-        # Consults Expendibots class to determine what valid actions are?
-
-        # for testing purposes to see that init and update methods work as intended,
-        # this for loop looks for a token in our colour and says to boom this token
-        for square in self.gamestate[2].keys():
-            if self.gamestate[2][square].col == self.colour:
-                return "BOOM", square
-
+        # Returns the best move to make by using the algorithm from game.py
+        return minmax_decision(self.state, self.game)
 
     def update(self, colour, action):
         """
@@ -71,22 +81,23 @@ class ExamplePlayer:
         You may assume that action will always correspond to an allowed action 
         for the player colour (your method does not need to validate the action
         against the game rules).
+        :return: Nothing, just updates the game state
         """
 
         action_type = action[0]
 
         if action_type == BOOM:  # action is a BOOM
             origin = action[1]
-            self.gamestate.board = boom(origin, self.board)
-            print("boom")
+            self.gamestate[2] = boom(origin, self.board)
+            # print("boom")  # for Tate's own reference                                < --- TODO: Comment out
 
         else:  # action is a MOVE
             n = action[1]
             loc_a = action[2]
             loc_b = action[3]
 
-            self.gamestate.board = move_token(n, loc_a, loc_b, self.board)
-            print("Move")
+            self.gamestate[2] = move_token(n, loc_a, loc_b, self.board)
+            # print("Move")  # for Tate's own reference                                < --- TODO: Comment out
 
 # everything above this line is used by the player class at the moment, but this should probably be moved to game.py file
 # ******************************************************************************************************************************************

@@ -7,6 +7,8 @@
 
 from m3ndax.player import ExamplePlayer as Player
 from m3ndax.game import *
-from m3ndax.util import *
+from m3ndax.player import INIT_BOARD
 
-Player(WHITE, )
+team_m3ndax = Player(WHITE, Expendibots())
+team_m3ndax.action()
+
