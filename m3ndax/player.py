@@ -16,7 +16,7 @@ UTILITYPLACEHOLDER: int = 0
 
 
 class ExamplePlayer:
-    def __init__(self, colour):
+    def __init__(self, colour, game):
         """
         This method is called once at the beginning of the game to initialise
         your player. You should use this opportunity to set up your own internal
@@ -27,6 +27,10 @@ class ExamplePlayer:
         program will play as (White or Black). The value will be one of the 
         strings "white" or "black" correspondingly.
         """
+
+        # TODO: create Expendibots class
+        self.game = game
+
         # Set up state representation
         board = create_board(_BLACK_START_SQUARES, _WHITE_START_SQUARES)
 
@@ -54,9 +58,10 @@ class ExamplePlayer:
 
         # for testing purposes to see that init and update methods work as intended,
         # this for loop looks for a token in our colour and says to boom this token
-        for square in self.board.keys():
-            if self.board[square].col == self.colour:
-                return ("BOOM", square)
+        for square in self.gamestate[2].keys():
+            if self.gamestate[2][square].col == self.colour:
+                return "BOOM", square
+
 
     def update(self, colour, action):
         """
@@ -82,6 +87,7 @@ class ExamplePlayer:
         if action_type == BOOM:  # action is a BOOM
             origin = action[1]
             self.gamestate.board = boom(origin, self.board)
+            print("boom")
 
         else:  # action is a MOVE
             n = action[1]
@@ -89,6 +95,7 @@ class ExamplePlayer:
             loc_b = action[3]
 
             self.gamestate.board = move_token(n, loc_a, loc_b, self.board)
+            print("Move")
 
 # everything above this line is used by the player class at the moment, but this should probably be moved to game.py file
 # ******************************************************************************************************************************************

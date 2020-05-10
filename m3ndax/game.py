@@ -1,12 +1,11 @@
 import copy
 from collections import namedtuple
 import numpy as np
-
+from m3ndax.util import print_board
 
 # NamedTuple definitions
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
-# col = colour, h = height
-Piece = namedtuple('P', 'col h')
+Piece = namedtuple('P', 'col h') # col = colour, h = height
 
 # Static Variable definitions
 BLACK = 'black'
@@ -14,14 +13,14 @@ WHITE = 'white'
 BOOM = "boom"
 MOVE = "move"
 
+
 # ______________________________________________________________________________
+# Algorithm taken from AIMA library: https://github.com/aimacode/aima-python/blob/master/games.py
 def expect_minmax(state, game):
     """
     [Figure 5.11]
     Return the best move for a player after dice are thrown. The game tree
-	includes chance nodes along with min and max nodes.
-	"""
-
+    includes chance nodes along with min and max nodes."""
 
     player = game.to_move(state)
 
@@ -55,6 +54,34 @@ def expect_minmax(state, game):
 
     # Body of expect_minmax:
     return max(game.actions(state), key=lambda a: chance_node(state, a), default=None)
+
+
+# ______________________________________________________________________________
+# Algorithm taken from AIMA library: https://github.com/aimacode/aima-python/blob/master/games.py
+def minmax_decision(state, game):
+    """Given a state in a game, calculate the best move by searching
+    forward all the way to the terminal states. [Figure 5.3]"""
+
+    player = game.to_move(state)
+
+    def max_value(state):
+        if game.terminal_test(state):
+            return game.utility(state, player)
+        v = -np.inf
+        for a in game.actions(state):
+            v = max(v, min_value(game.result(state, a)))
+        return v
+
+    def min_value(state):
+        if game.terminal_test(state):
+            return game.utility(state, player)
+        v = np.inf
+        for a in game.actions(state):
+            v = min(v, max_value(game.result(state, a)))
+        return v
+
+    # Body of minmax_decision:
+    return max(game.actions(state), key=lambda a: min_value(game.result(state, a)))
 
 
 # AIMA class, examples of how to implement it on https://github.com/aimacode/aima-python/blob/master/games.py
@@ -124,7 +151,7 @@ class Expendibots(Game):
 
         for key in board:
             # for each players tokens whose turn it is
-            if board[key].col == state.colour:
+            if board[key].col == state[0]:
 
                 # one possible action is to boom the white token
                 boom = (BOOM, key)
@@ -155,6 +182,7 @@ class Expendibots(Game):
         local_board = copy.deepcopy(state.board)
 
         if movetype == BOOM:
+            # TODO: return game state in GameState format  'to_move, utility, board, moves'
             return boom_piece(move[1], local_board)  # returns a new boomed board
 
         else:
@@ -181,7 +209,7 @@ class Expendibots(Game):
         black = False
         white = False
 
-        board = state.board
+        board = state[2]
 
         for key in board:
             if board[key].col == WHITE:
@@ -193,12 +221,12 @@ class Expendibots(Game):
 
     def to_move(self, state):
         """Return the player whose move it is in this state."""
-        return state.to_move
+        return state[0]
 
     def display(self, state):
         """Print or otherwise display the state."""
         # TODO maybe use the printing methods provided to us in Part A to print state of the game?
-        print(state)
+        print_(state)
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -246,7 +274,7 @@ def valid_move(n, a, b, board):
     # not valid if loc b is out of reach
     my_range = board[(a)].h
     dist = manhat_dist(a, b)
-    if (dist > my_range):
+    if dist > my_range:
         # print("loc b is out of reach")
         return False
 
@@ -357,8 +385,6 @@ def create_board(black_start_squares, white_start_squares):
 
 
 #################### functions that are not in use at the moment, just here for reference: #############
-
-
 
 
 def manhat_dist(a, b):
