@@ -11,10 +11,6 @@ def create_board(black_start_squares, white_start_squares) :
 
 
 
-
-
-
-
 def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
     """
     For help with visualisation and debugging: output a board diagram with
