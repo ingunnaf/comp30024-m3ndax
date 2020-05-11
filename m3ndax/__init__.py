@@ -9,8 +9,10 @@
 #from m3ndax.game import Expendibots, BLACK, WHITE
 from player import ExamplePlayer as Player
 from game import Expendibots, BLACK, WHITE
+from util import print_board
 
 team_m3ndax = Player(BLACK, Expendibots())
 action1 = team_m3ndax.action()
+print_board(team_m3ndax.state.board)
 team_m3ndax.update(WHITE, action1)
-
+print_board(team_m3ndax.state.board)

@@ -21,47 +21,78 @@ _WHITE_START_SQUARES = [(0, 1), (1, 1), (3, 1), (4, 1), (6, 1), (7, 1),
                         (0, 0), (1, 0), (3, 0), (4, 0), (6, 0), (7, 0)]
 
 
-# ______________________________________________________________________________
-# Algorithm taken from AIMA library: https://github.com/aimacode/aima-python/blob/master/games.py
-def alpha_beta_search(state, game):
+
+
+
+    
+
+
+#AIMA library function
+def alpha_beta_cutoff_search(state, game, eval_fn=None, d=4, cutoff_test=None):
     """Search game to determine best action; use alpha-beta pruning.
-    As in [Figure 5.7], this version searches all the way to the leaves."""
+    This version cuts off search and uses an evaluation function."""
 
     player = game.to_move(state)
 
     # Functions used by alpha_beta
-    def max_value(state, alpha, beta):
-        if game.terminal_test(state):
-            return game.utility(state, player)
+    def max_value(state, alpha, beta, depth):
+        if cutoff_test(state, depth):
+            return eval_fn(state)
         v = -np.inf
         for a in game.actions(state):
-            v = max(v, min_value(game.result(state, a), alpha, beta))
+            v = max(v, min_value(game.result(state, a), alpha, beta, depth + 1))
             if v >= beta:
                 return v
             alpha = max(alpha, v)
         return v
 
-    def min_value(state, alpha, beta):
-        if game.terminal_test(state):
-            return game.utility(state, player)
+    def min_value(state, alpha, beta, depth):
+        if cutoff_test(state, depth):
+            return eval_fn(state)
         v = np.inf
         for a in game.actions(state):
-            v = min(v, max_value(game.result(state, a), alpha, beta))
+            v = min(v, max_value(game.result(state, a), alpha, beta, depth + 1))
             if v <= alpha:
                 return v
             beta = min(beta, v)
         return v
+    
+    def eval_fn(state, game): 
 
-    # Body of alpha_beta_search:
+    ourcolour = state.to_move
+    if ourcolour == BLACK:
+        othercolour = WHITE
+    else:
+        othercolour = BLACK
+
+    # if we have won in this state, return 100
+    if 
+
+    # if we have lost in this state, return -100
+
+    # otherwise, return # of our tokens - # of their tokens
+
+    board = state.board
+    ntokensleft = n_pieces(board, ourcolour)
+    nothertokensleft = n_pieces(board, othercolour)
+    # returns positive value if we have more tokens left than opponent
+    return nothertokensleft - ntokensleft
+
+    # Body of alpha_beta_cutoff_search starts here:
+    # The default test cuts off at depth d or at a terminal state
+    cutoff_test = (cutoff_test or (lambda state, depth: depth > d or game.terminal_test(state)))
+    eval_fn = eval_fn #or (lambda state: game.utility(state, player))
     best_score = -np.inf
     beta = np.inf
     best_action = None
     for a in game.actions(state):
-        v = min_value(game.result(state, a), best_score, beta)
+        v = min_value(game.result(state, a), best_score, beta, 1)
         if v > best_score:
             best_score = v
             best_action = a
     return best_action
+
+
 
 
 # ______________________________________________________________________________
@@ -194,29 +225,32 @@ class Expendibots(Game):
         board = state.board
 
         """ If there is at least one remaining token in our colour and the game has ended, we have won"""
-        for key in board:
-            if board[key].col == player:
-                return 1
-            else:
-                # a token of another colour was found
-                return -1
+        if self.terminal_test(state) == True: 
+            for key in board:
+                if board[key].col == player:
+                    return 1
+                else:
+                    # a token of another colour was found
+                    return -1
         # otherwise (if there no tokens of any colour) return neutral value 0
         return 0
 
     def terminal_test(self, state):
         """Return True if this is a final state for the game."""
-        black = False
-        white = False
+        hasblack = False # stores whether or not there are any black tokens left
+        haswhite = False #stores whether or not there are any white tokens left
 
         board = state.board
 
         for key in board:
             if board[key].col == WHITE:
-                white = True
+                haswhite = True
             if board[key].col == BLACK:
-                black = True
-
-        return black and white
+                hasblack = True
+        # 1) returns true if there are still black tokens but no white ones (BLACK WON)
+        # 2) returns true if there are still white tokens but no black ones (WHITE WON)
+        # 3) returns true if there are NO white and NO black tokens left (TIE)
+        return (hasblack and not haswhite) or (haswhite and not hasblack) or not (hasblack and haswhite)
 
     def to_move(self, state):
         """Return the player whose move it is in this state."""

@@ -50,7 +50,10 @@ class ExamplePlayer:
                 return "BOOM", square'''
 
         # Returns the best move to make by using the algorithm from game.py
-        return minmax_decision(self.state, self.game)
+        #return minmax_decision(self.state, self.game)
+
+        return alpha_beta_cutoff_search(self.state, self.game, eval_fn(self.state), d=4, cutoff_test=None)
+
         # TODO: ensure that the move is in the correct format for the referee
 
     def update(self, colour, action):
