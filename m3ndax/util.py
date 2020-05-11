@@ -130,7 +130,7 @@ def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):
         if xy not in board_dict:
             cells.append("   ")
         else:
-            colour = str(board_dict[xy].col)
+            colour = str(board_dict[xy].col)[0:2]
             height = str(board_dict[xy].h)
             piece = (colour + height + "")
             cells.append(piece[:3].center(3))
