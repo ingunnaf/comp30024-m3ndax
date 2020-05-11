@@ -56,32 +56,36 @@ def alpha_beta_cutoff_search(state, game, eval_fn=None, d=4, cutoff_test=None):
                 return v
             beta = min(beta, v)
         return v
-    
+    """
     def eval_fn(state, game): 
+        ourcolour = state.to_move
 
-    ourcolour = state.to_move
-    if ourcolour == BLACK:
-        othercolour = WHITE
-    else:
-        othercolour = BLACK
+        if ourcolour == BLACK:
+            othercolour = WHITE
+        else:
+            othercolour = BLACK
 
-    # if we have won in this state, return 100
-    if 
+        # if we have won in this state, return 100
+        if game.terminal_test(state) : 
+            winner = whowon(state, game)
+            if winner == ourcolour: 
+                return 100
+            # if opponent has won in this state, return -100
+            else if winner == othercolour:
+                return -100
+        
+        # otherwise, return # of our tokens - # of their tokens
 
-    # if we have lost in this state, return -100
-
-    # otherwise, return # of our tokens - # of their tokens
-
-    board = state.board
-    ntokensleft = n_pieces(board, ourcolour)
-    nothertokensleft = n_pieces(board, othercolour)
-    # returns positive value if we have more tokens left than opponent
-    return nothertokensleft - ntokensleft
+        board = state.board
+        ntokensleft = n_pieces(board, ourcolour)
+        nothertokensleft = n_pieces(board, othercolour)
+        # returns positive value if we have more tokens left than opponent
+        return nothertokensleft - ntokensleft"""
 
     # Body of alpha_beta_cutoff_search starts here:
     # The default test cuts off at depth d or at a terminal state
     cutoff_test = (cutoff_test or (lambda state, depth: depth > d or game.terminal_test(state)))
-    eval_fn = eval_fn #or (lambda state: game.utility(state, player))
+    eval_fn = eval_fn or (lambda state: game.utility(state, player))
     best_score = -np.inf
     beta = np.inf
     best_action = None
@@ -92,6 +96,25 @@ def alpha_beta_cutoff_search(state, game, eval_fn=None, d=4, cutoff_test=None):
             best_action = a
     return best_action
 
+
+def whowon(state, game) :
+
+    hasblack = False # stores whether or not there are any black tokens left
+    haswhite = False #stores whether or not there are any white tokens left
+
+    board = state.board
+
+    for key in board:
+        if board[key].col == WHITE:
+            haswhite = True
+        if board[key].col == BLACK:
+            hasblack = True
+    if (hasblack and not haswhite):
+        return BLACK
+    if (haswhite and not hasblack):
+        return WHITE
+    else: 
+        return None
 
 
 
@@ -201,7 +224,6 @@ class Expendibots(Game):
 
     def result(self, state, move):
         """Return the state that results from making a move from a state."""
-        """ Also just copied from part A at the moment, needs to be modified"""
 
         moveType = move[0]
 
@@ -209,12 +231,12 @@ class Expendibots(Game):
 
         if moveType == BOOM:
             # TODO: return game state in GameState format  'to_move, utility, board, moves'
-            return GameState(self.to_move(state), UTILITYPLACEHOLDER, boom_piece(move[1], local_board),
+            return GameState(self.to_move(state), self.utility(state, self.player), boom_piece(move[1], local_board),
                              None)  # returns a new boomed board
 
         else:
             # TODO: return game state in GameState format  'to_move, utility, board, moves'
-            return GameState(self.to_move(state), UTILITYPLACEHOLDER,
+            return GameState(self.to_move(state), self.utility(state, self.player),
                              move_token(move[1], move[2], move[3], local_board),
                              None)  # returns a new moved board
 
@@ -222,18 +244,30 @@ class Expendibots(Game):
         """Returns a negative value if we have lost, a positive value if we won, and a 0 if it is a tie. """
         # TODO figure out how to use utility function? :-) !!!
 
-        board = state.board
+        ourcolour = state.to_move
 
-        """ If there is at least one remaining token in our colour and the game has ended, we have won"""
-        if self.terminal_test(state) == True: 
-            for key in board:
-                if board[key].col == player:
-                    return 1
-                else:
-                    # a token of another colour was found
-                    return -1
-        # otherwise (if there no tokens of any colour) return neutral value 0
-        return 0
+        if ourcolour == BLACK:
+            othercolour = WHITE
+        else:
+            othercolour = BLACK
+
+        # if we have won in this state, return 100
+        if self.terminal_test(state) : 
+            winner = whowon(state, self)
+            if winner == ourcolour: 
+                return 100
+            # if opponent has won in this state, return -100
+            elif winner == othercolour:
+                return -100
+
+        # otherwise, return # of our tokens - # of their tokens (if it is a tie, it will return 0)
+        board = state.board
+        ntokensleft = n_pieces(board, ourcolour)
+        nothertokensleft = n_pieces(board, othercolour)
+        # returns positive value if we have more tokens left than opponent
+        return nothertokensleft - ntokensleft
+
+
 
     def terminal_test(self, state):
         """Return True if this is a final state for the game."""
