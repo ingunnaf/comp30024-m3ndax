@@ -6,16 +6,11 @@
 # it into this module with the name 'Player':
 
 #from m3ndax.player import ExamplePlayer as Player
-#from m3ndax.game import *
-#from m3ndax.player import INIT_BOARD
+#from m3ndax.game import Expendibots, BLACK, WHITE
 from player import ExamplePlayer as Player
-from game import *
-from player import INIT_BOARD
+from game import Expendibots, BLACK, WHITE
 
-team_m3ndax = Player(WHITE, Expendibots())
+team_m3ndax = Player(BLACK, Expendibots())
 action1 = team_m3ndax.action()
-print(action1)
+team_m3ndax.update(WHITE, action1)
 
-team_m3ndax.update(BLACK, action1)
-
-print_board(team_m3ndax.state[2])

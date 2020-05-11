@@ -13,48 +13,55 @@ BLACK = 'black'
 WHITE = 'white'
 BOOM = "boom"
 MOVE = "move"
-UTILITYPLACEHOLDER: int = 0
+UTILITYPLACEHOLDER = 0
+
+_BLACK_START_SQUARES = [(0, 7), (1, 7), (3, 7), (4, 7), (6, 7), (7, 7),
+                        (0, 6), (1, 6), (3, 6), (4, 6), (6, 6), (7, 6)]
+_WHITE_START_SQUARES = [(0, 1), (1, 1), (3, 1), (4, 1), (6, 1), (7, 1),
+                        (0, 0), (1, 0), (3, 0), (4, 0), (6, 0), (7, 0)]
+
 
 # ______________________________________________________________________________
 # Algorithm taken from AIMA library: https://github.com/aimacode/aima-python/blob/master/games.py
-def expect_minmax(state, game):
-    """
-    [Figure 5.11]
-    Return the best move for a player after dice are thrown. The game tree
-    includes chance nodes along with min and max nodes."""
+def alpha_beta_search(state, game):
+    """Search game to determine best action; use alpha-beta pruning.
+    As in [Figure 5.7], this version searches all the way to the leaves."""
 
     player = game.to_move(state)
 
-    def max_value(state):
+    # Functions used by alpha_beta
+    def max_value(state, alpha, beta):
+        if game.terminal_test(state):
+            return game.utility(state, player)
         v = -np.inf
         for a in game.actions(state):
-            v = max(v, chance_node(state, a))
+            v = max(v, min_value(game.result(state, a), alpha, beta))
+            if v >= beta:
+                return v
+            alpha = max(alpha, v)
         return v
 
-    def min_value(state):
+    def min_value(state, alpha, beta):
+        if game.terminal_test(state):
+            return game.utility(state, player)
         v = np.inf
         for a in game.actions(state):
-            v = min(v, chance_node(state, a))
+            v = min(v, max_value(game.result(state, a), alpha, beta))
+            if v <= alpha:
+                return v
+            beta = min(beta, v)
         return v
 
-    def chance_node(state, action):
-        res_state = game.result(state, action)
-        if game.terminal_test(res_state):
-            return game.utility(res_state, player)
-        sum_chances = 0
-        num_chances = len(game.chances(res_state))
-        for chance in game.chances(res_state):
-            res_state = game.outcome(res_state, chance)
-            util = 0
-            if res_state.to_move == player:
-                util = max_value(res_state)
-            else:
-                util = min_value(res_state)
-            sum_chances += util * game.probability(chance)
-        return sum_chances / num_chances
-
-    # Body of expect_minmax:
-    return max(game.actions(state), key=lambda a: chance_node(state, a), default=None)
+    # Body of alpha_beta_search:
+    best_score = -np.inf
+    beta = np.inf
+    best_action = None
+    for a in game.actions(state):
+        v = min_value(game.result(state, a), best_score, beta)
+        if v > best_score:
+            best_score = v
+            best_action = a
+    return best_action
 
 
 # ______________________________________________________________________________
@@ -122,18 +129,6 @@ class Game:
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
-    def play_game(self, *players):
-        # TODO: figure out whether this method can be removed
-        """Play an n-person, move-alternating game."""
-        state = self.initial
-        while True:
-            for player in players:
-                move = player(self, state)
-                state = self.result(state, move)
-                if self.terminal_test(state):
-                    self.display(state)
-                    return self.utility(state, self.to_move(self.initial))
-
 
 class Expendibots(Game):
     """ Note to self/both of us : Given that the game class uses the state passed to all these 
@@ -152,7 +147,7 @@ class Expendibots(Game):
 
         for key in board:
             # for each players tokens whose turn it is
-            if board[key].col == state[0]:
+            if board[key].col == state.to_move:
 
                 # one possible action is to boom the white token
                 boom = (BOOM, key)
@@ -188,18 +183,19 @@ class Expendibots(Game):
 
         else:
             # TODO: return game state in GameState format  'to_move, utility, board, moves'
-            return GameState(self.to_move(state), UTILITYPLACEHOLDER, move_token(move[1], move[2], move[3], local_board),
+            return GameState(self.to_move(state), UTILITYPLACEHOLDER,
+                             move_token(move[1], move[2], move[3], local_board),
                              None)  # returns a new moved board
 
     def utility(self, state, player):
         """Returns a negative value if we have lost, a positive value if we won, and a 0 if it is a tie. """
         # TODO figure out how to use utility function? :-) !!!
-        ourcolour = player
+
         board = state.board
 
         """ If there is at least one remaining token in our colour and the game has ended, we have won"""
         for key in board:
-            if board[key].col == ourcolour:
+            if board[key].col == player:
                 return 1
             else:
                 # a token of another colour was found
@@ -212,7 +208,7 @@ class Expendibots(Game):
         black = False
         white = False
 
-        board = state[2]
+        board = state.board
 
         for key in board:
             if board[key].col == WHITE:
@@ -224,11 +220,11 @@ class Expendibots(Game):
 
     def to_move(self, state):
         """Return the player whose move it is in this state."""
-        return state[0]
+        return state.to_move
 
     def display(self, state):
         """Print or otherwise display the state."""
-        print_board(state[3])
+        print_board(state.board)
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -398,3 +394,7 @@ def n_pieces(board, piece_col):
             cnt += board[xy].h
 
     return cnt
+
+
+# define initial board
+INIT_BOARD = create_board(_BLACK_START_SQUARES, _WHITE_START_SQUARES)
