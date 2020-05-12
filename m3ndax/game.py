@@ -225,12 +225,12 @@ class Expendibots(Game):
         local_board = copy.deepcopy(state.board)
 
         if moveType == BOOM:
-            # TODO: return game state in GameState format  'to_move, utility, board, moves'
+
             return GameState(self.to_move(state), self.utility(state, self.player), boom_piece(move[1], local_board),
                              None)  # returns a new boomed board
 
         else:
-            # TODO: return game state in GameState format  'to_move, utility, board, moves'
+
             return GameState(self.to_move(state), self.utility(state, self.player),
                              move_token(move[1], move[2], move[3], local_board),
                              None)  # returns a new moved board

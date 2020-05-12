@@ -38,14 +38,6 @@ class ExamplePlayer:
         :return: ("MOVE", n, (Xa, Ya), (Xb, Yb)) OR ("BOOM", (x, y))
         """
 
-        ''' Placeholder: just returns a valid action
-        Consults Expendibots class to determine what valid actions are?
-        for testing purposes to see that init and update methods work as intended,
-        this for loop looks for a token in our colour and says to boom this token
-        
-        for square in self.game.board.keys():
-            if self.game.board[square].col == self.colour:
-                return "BOOM", square'''
 
         # Returns the best move to make by using the algorithm from game.py
         # return minmax_decision(self.state, self.game)
@@ -72,7 +64,6 @@ class ExamplePlayer:
         :return: Nothing, just updates the game state
         """
 
-        # TODO: implement this method properly (go over and check that it works)
         action_type = action[0]
 
         if action_type == BOOM:  # action is a BOOM
