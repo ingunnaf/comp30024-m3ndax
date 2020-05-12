@@ -386,7 +386,9 @@ def boom_piece(origin, init_board):
     return ret_board
 
 
-def move_token(n, a, b, board):
+def move_token(n, a, b, state, player):
+
+    board = state.board
     ret_board = copy.deepcopy(board)
     # check if move is valid
     """if not valid_move(n, a, b, board):
@@ -397,9 +399,9 @@ def move_token(n, a, b, board):
     if b in ret_board:
         current_height_b = ret_board[b].h
         new_height_b = current_height_b + n
-        ret_board[b] = Piece("w", new_height_b)
+        ret_board[b] = Piece(player, new_height_b)
     else:  # loc b has no tokens yet so we can just put our new tokens there
-        ret_board[b] = Piece("w", n)
+        ret_board[b] = Piece(player), n)
 
     # handle potential remaining tokens at loc a
     current_height_a = ret_board[a].h
@@ -408,7 +410,7 @@ def move_token(n, a, b, board):
         # no more tokens left at loc a
         del ret_board[a]
     else:
-        ret_board[a] = Piece("w", new_height_a)
+        ret_board[a] = Piece(player, new_height_a)
 
     # done
     return ret_board
