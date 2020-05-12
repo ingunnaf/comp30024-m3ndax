@@ -158,13 +158,13 @@ class Expendibots(Game):
 
     """ Implements the game class to model Expendibots """
 
-def __init__(self, player):
-    # Player designates the colour of the player
-    self.player = player
-    if player == WHITE:
-        otherplayer = BLACK
-    else: 
-        otherplayer = WHITE
+    def __init__(self, player):
+        # Player designates the colour of the player
+        self.player = player
+        if player == WHITE:
+            self.otherplayer = BLACK
+        else: 
+            self.otherplayer = WHITE
 
     def actions(self, state):
         """Return a list of the allowable moves at this point."""
