@@ -205,7 +205,8 @@ class Expendibots(Game):
         if moveType == BOOM:
             board = boom_piece(move[1], local_board)
         else:
-            board = move_token(move[1], move[2], move[3], local_board)
+            board = move_token(move[1], move[2], move[3], state, self.player)
+            
         
         # find out whose turn it is next
         current_to_move = state.to_move
@@ -401,7 +402,7 @@ def move_token(n, a, b, state, player):
         new_height_b = current_height_b + n
         ret_board[b] = Piece(player, new_height_b)
     else:  # loc b has no tokens yet so we can just put our new tokens there
-        ret_board[b] = Piece(player), n)
+        ret_board[b] = Piece(player, n)
 
     # handle potential remaining tokens at loc a
     current_height_a = ret_board[a].h
