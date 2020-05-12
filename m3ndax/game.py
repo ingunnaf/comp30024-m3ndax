@@ -189,7 +189,7 @@ class Expendibots(Game):
                         for y in range(key[1] - my_range, key[1] + my_range + 1):
 
                             # if move is valid, add it to the possible_actions
-                            if valid_move(n, key, (x, y), board):
+                            if valid_move(n, key, (x, y), state, self.player):
                                 move = (MOVE, n, key, (x, y))
                                 possible_actions.append(move)
 
@@ -274,7 +274,13 @@ class Expendibots(Game):
 
 
 ######################################## functions relating to game and board below ####################################
-def valid_move(n, a, b, board):
+def valid_move(n, a, b, state, player):
+    board = state.board
+
+    if player == WHITE:
+        otherplayer = BLACK
+    else: otherplayer = WHITE
+    
     # not valid if there is no token at a
     if a not in board:
         return False
@@ -288,10 +294,10 @@ def valid_move(n, a, b, board):
         # print("you cannot move diagonally in a single move")
         return False
 
-    # not valid if the token at loc a is black
+    # not valid if the token at loc a is not our player colour
     if a in board:
-        if board[a].col == BLACK:
-            # print("you can't move a black token")
+        if board[a].col == otherplayer:
+            # print("you can't move the other players token")
             return False
 
     # not valid if less than n tokens at loc a
@@ -306,9 +312,9 @@ def valid_move(n, a, b, board):
         # print("loc b is out of reach")
         return False
 
-    # not valid if there is a black token at loc b
+    # not valid if there is a token of the other players colour at loc b
     if b in board:
-        if board[b].col == BLACK:
+        if board[b].col == otherplayer:
             return False
 
     # invalid if loc a or loc b are not in valid range
@@ -329,7 +335,9 @@ def valid_move(n, a, b, board):
     return True
 
 
-def valid_boom(origin, my_board):
+def valid_boom(origin, state, player):
+    my_board = state.board
+
     if origin[0] not in range(0, 8):
         print("x coordinate not in range")
         return False
@@ -344,7 +352,7 @@ def valid_boom(origin, my_board):
 
 
 def boom(origin, my_board):
-    if not valid_boom(origin, my_board):
+    if not valid_boom(origin, state, player):
         raise RuntimeError("Invalid Boom")
 
     else:
