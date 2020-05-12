@@ -241,7 +241,7 @@ class Expendibots(Game):
         ntokensleft = n_pieces(board, player)
         nothertokensleft = n_pieces(board, self.otherplayer)
         # returns positive value if we have more tokens left than opponent
-        return nothertokensleft - ntokensleft
+        return ntokensleft - nothertokensleft
 
     def terminal_test(self, state):
         """Return True if this is a final state for the game."""
