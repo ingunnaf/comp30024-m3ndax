@@ -4,7 +4,7 @@ import copy
 import random
 
 # Import functions from local module
-from m3ndax.game import *
+from randomPlayer.game import *
 
 
 class ExamplePlayer:

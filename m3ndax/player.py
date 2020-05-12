@@ -1,8 +1,6 @@
-# Remote imports
-from collections import namedtuple
 
 # Import functions from local module
-from randomPlayer.game import *
+from m3ndax.game import *
 
 
 class ExamplePlayer:
@@ -37,9 +35,7 @@ class ExamplePlayer:
         :return: ("MOVE", n, (Xa, Ya), (Xb, Yb)) OR ("BOOM", (x, y))
         """
 
-
         # Returns the best move to make by using the algorithm from game.py
-        # return minmax_decision(self.state, self.game)
         return alpha_beta_cutoff_search(self.state, self.game, None, d=4, cutoff_test=None)
 
     def update(self, colour, action):
@@ -56,7 +52,7 @@ class ExamplePlayer:
         The parameter action is a representation of the most recent action
         conforming to the spec's instructions for representing actions.
 
-        You may assume that action will always correspond to an allowed action 
+        You may assume that action will always correspond to an allowed action
         for the player colour (your method does not need to validate the action
         against the game rules).
         :return: Nothing, just updates the game state
@@ -66,7 +62,7 @@ class ExamplePlayer:
 
         if action_type == BOOM:  # action is a BOOM
             origin = action[1]
-            placeholderstate = boom(origin, self.state.board)
+            place_holder_state = boom(origin, self.state.board)
 
 
         else:  # action is a MOVE
@@ -74,12 +70,7 @@ class ExamplePlayer:
             loc_a = action[2]
             loc_b = action[3]
 
-            placeholderstate = move_token(n, loc_a, loc_b, self.state.board)
+            place_holder_state = move_token(n, loc_a, loc_b, self.state.board)
 
         # update state
-        self.state = GameState(colour, self.game.utility(self.state, self), placeholderstate, action)
-
-# everything above this line is used by the player class at the moment, but this should probably be moved to game.py file
-# ******************************************************************************************************************************************
-# ******************************************************************************************************************************************
-# ******************************************************************************************************************************************
+        self.state = GameState(colour, self.game.utility(self.state, self.colour), place_holder_state, action)

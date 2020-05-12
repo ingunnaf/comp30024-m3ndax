@@ -109,34 +109,6 @@ def whowon(state, game):
         return None
 
 
-# ______________________________________________________________________________
-# Algorithm taken from AIMA library: https://github.com/aimacode/aima-python/blob/master/games.py
-def minmax_decision(state, game):
-    """Given a state in a game, calculate the best move by searching
-    forward all the way to the terminal states. [Figure 5.3]"""
-
-    player = game.to_move(state)
-
-    def max_value(state):
-        if game.terminal_test(state):
-            return game.utility(state, player)
-        v = -np.inf
-        for a in game.actions(state):
-            v = max(v, min_value(game.result(state, a)))
-        return v
-
-    def min_value(state):
-        if game.terminal_test(state):
-            return game.utility(state, player)
-        v = np.inf
-        for a in game.actions(state):
-            v = min(v, max_value(game.result(state, a)))
-        return v
-
-    # Body of minmax_decision:
-    return max(game.actions(state), key=lambda a: min_value(game.result(state, a)))
-
-
 # AIMA class, examples of how to implement it on https://github.com/aimacode/aima-python/blob/master/games.py
 class Game:
     """A game is similar to a problem, but it has a utility for each
@@ -239,7 +211,7 @@ class Expendibots(Game):
         """Returns a negative value if we have lost, a positive value if we won, and a 0 if it is a tie. """
         # TODO figure out how to use utility function? :-) !!!
 
-        ourcolour = state.to_move
+        ourcolour = player
 
         if ourcolour == BLACK:
             othercolour = WHITE
