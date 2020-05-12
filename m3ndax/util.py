@@ -1,6 +1,6 @@
-'''
+"""
 Stores any extra utility classes and functions that we may need.
-'''
+"""
 
 
 def print_board(board_dict, message="", unicode=False, compact=True, **kwargs):

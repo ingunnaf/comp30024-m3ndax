@@ -1,8 +1,6 @@
 import copy
 from collections import namedtuple
 import numpy as np
-#from m3ndax.util import print_board
-from util import print_board
 
 # NamedTuple definitions
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
@@ -11,8 +9,8 @@ Piece = namedtuple('P', 'col h')  # col = colour, h = height
 # Static Variable definitions
 BLACK = 'black'
 WHITE = 'white'
-BOOM = "boom"
-MOVE = "move"
+BOOM = "BOOM"
+MOVE = "MOVE"
 UTILITYPLACEHOLDER = 0
 
 _BLACK_START_SQUARES = [(0, 7), (1, 7), (3, 7), (4, 7), (6, 7), (7, 7),
@@ -21,13 +19,7 @@ _WHITE_START_SQUARES = [(0, 1), (1, 1), (3, 1), (4, 1), (6, 1), (7, 1),
                         (0, 0), (1, 0), (3, 0), (4, 0), (6, 0), (7, 0)]
 
 
-
-
-
-    
-
-
-#AIMA library function
+# AIMA library function
 def alpha_beta_cutoff_search(state, game, eval_fn=None, d=4, cutoff_test=None):
     """Search game to determine best action; use alpha-beta pruning.
     This version cuts off search and uses an evaluation function."""
@@ -56,6 +48,7 @@ def alpha_beta_cutoff_search(state, game, eval_fn=None, d=4, cutoff_test=None):
                 return v
             beta = min(beta, v)
         return v
+
     """
     def eval_fn(state, game): 
         ourcolour = state.to_move
@@ -97,10 +90,9 @@ def alpha_beta_cutoff_search(state, game, eval_fn=None, d=4, cutoff_test=None):
     return best_action
 
 
-def whowon(state, game) :
-
-    hasblack = False # stores whether or not there are any black tokens left
-    haswhite = False #stores whether or not there are any white tokens left
+def whowon(state, game):
+    hasblack = False  # stores whether or not there are any black tokens left
+    haswhite = False  # stores whether or not there are any white tokens left
 
     board = state.board
 
@@ -113,9 +105,8 @@ def whowon(state, game) :
         return BLACK
     if (haswhite and not hasblack):
         return WHITE
-    else: 
+    else:
         return None
-
 
 
 # ______________________________________________________________________________
@@ -193,6 +184,10 @@ class Expendibots(Game):
 
     """ Implements the game class to model Expendibots """
 
+    def __init__(self, player):
+        # Player designates the colour of the player
+        self.player = player
+
     def actions(self, state):
         """Return a list of the allowable moves at this point."""
 
@@ -201,7 +196,7 @@ class Expendibots(Game):
 
         for key in board:
             # for each players tokens whose turn it is
-            if board[key].col == state.to_move:
+            if board[key].col == self.player:
 
                 # one possible action is to boom the white token
                 boom = (BOOM, key)
@@ -252,9 +247,9 @@ class Expendibots(Game):
             othercolour = BLACK
 
         # if we have won in this state, return 100
-        if self.terminal_test(state) : 
+        if self.terminal_test(state):
             winner = whowon(state, self)
-            if winner == ourcolour: 
+            if winner == ourcolour:
                 return 100
             # if opponent has won in this state, return -100
             elif winner == othercolour:
@@ -267,12 +262,10 @@ class Expendibots(Game):
         # returns positive value if we have more tokens left than opponent
         return nothertokensleft - ntokensleft
 
-
-
     def terminal_test(self, state):
         """Return True if this is a final state for the game."""
-        hasblack = False # stores whether or not there are any black tokens left
-        haswhite = False #stores whether or not there are any white tokens left
+        hasblack = False  # stores whether or not there are any black tokens left
+        haswhite = False  # stores whether or not there are any white tokens left
 
         board = state.board
 
@@ -292,7 +285,8 @@ class Expendibots(Game):
 
     def display(self, state):
         """Print or otherwise display the state."""
-        print_board(state.board)
+        # print_board(state.board)
+        print(state.board)
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

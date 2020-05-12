@@ -3,11 +3,11 @@ from collections import namedtuple
 import copy
 
 # Import functions from local module
-# from m3ndax.game import *
-from game import *
+from m3ndax.game import *
+
 
 class ExamplePlayer:
-    def __init__(self, colour, game):
+    def __init__(self, colour):
         """
         This method is called once at the beginning of the game to initialise
         your player. You should use this opportunity to set up your own internal
@@ -21,7 +21,7 @@ class ExamplePlayer:
         """
 
         # Initialise game class (in our case the Expendibots class) and the board state
-        self.game = game
+        self.game = Expendibots(colour)
         self.state = GameState(WHITE, 0, INIT_BOARD, None)
 
         # our player colour
@@ -38,8 +38,6 @@ class ExamplePlayer:
         :return: ("MOVE", n, (Xa, Ya), (Xb, Yb)) OR ("BOOM", (x, y))
         """
 
-
-
         ''' Placeholder: just returns a valid action
         Consults Expendibots class to determine what valid actions are?
         for testing purposes to see that init and update methods work as intended,
@@ -50,11 +48,9 @@ class ExamplePlayer:
                 return "BOOM", square'''
 
         # Returns the best move to make by using the algorithm from game.py
-        #return minmax_decision(self.state, self.game)
+        # return minmax_decision(self.state, self.game)
 
         return alpha_beta_cutoff_search(self.state, self.game, None, d=4, cutoff_test=None)
-
-        # TODO: ensure that the move is in the correct format for the referee
 
     def update(self, colour, action):
         """
@@ -91,10 +87,8 @@ class ExamplePlayer:
 
             placeholderstate = move_token(n, loc_a, loc_b, self.state.board)
 
-        #update state
-        self.state = GameState(colour, 0, placeholderstate, action)
-
-
+        # update state
+        self.state = GameState(colour, self.game.utility(self.state, self), placeholderstate, action)
 
 # everything above this line is used by the player class at the moment, but this should probably be moved to game.py file
 # ******************************************************************************************************************************************
