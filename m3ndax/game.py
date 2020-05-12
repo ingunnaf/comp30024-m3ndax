@@ -22,7 +22,7 @@ _WHITE_START_SQUARES = [(0, 1), (1, 1), (3, 1), (4, 1), (6, 1), (7, 1),
 
 
 # AIMA library function
-def alpha_beta_cutoff_search(state, game, eval_fn=None, d=4, cutoff_test=None):
+def alpha_beta_cutoff_search(state, game, eval_fn=None, d=3, cutoff_test=None):
     """Search game to determine best action; use alpha-beta pruning.
     This version cuts off search and uses an evaluation function."""
 
@@ -51,31 +51,6 @@ def alpha_beta_cutoff_search(state, game, eval_fn=None, d=4, cutoff_test=None):
             beta = min(beta, v)
         return v
 
-    """
-    def eval_fn(state, game): 
-        ourcolour = state.to_move
-
-        if ourcolour == BLACK:
-            othercolour = WHITE
-        else:
-            othercolour = BLACK
-
-        # if we have won in this state, return 100
-        if game.terminal_test(state) : 
-            winner = whowon(state, game)
-            if winner == ourcolour: 
-                return 100
-            # if opponent has won in this state, return -100
-            else if winner == othercolour:
-                return -100
-        
-        # otherwise, return # of our tokens - # of their tokens
-
-        board = state.board
-        ntokensleft = n_pieces(board, ourcolour)
-        nothertokensleft = n_pieces(board, othercolour)
-        # returns positive value if we have more tokens left than opponent
-        return nothertokensleft - ntokensleft"""
 
     # Body of alpha_beta_cutoff_search starts here:
     # The default test cuts off at depth d or at a terminal state
@@ -280,7 +255,8 @@ def valid_move(n, a, b, state, player):
 
     if player == WHITE:
         otherplayer = BLACK
-    else: otherplayer = WHITE
+    else: 
+        otherplayer = WHITE
 
     # not valid if it isn't our turn to move :-) 
     if not (state.to_move == player):
@@ -389,8 +365,7 @@ def boom_piece(origin, init_board):
 
 def move_token(n, a, b, state, player):
 
-    board = state.board
-    ret_board = copy.deepcopy(board)
+    ret_board = copy.deepcopy(state.board)
     # check if move is valid
     """if not valid_move(n, a, b, board):
             return board"""  # i commented this out because at the moment, we don't need to validate
@@ -400,9 +375,9 @@ def move_token(n, a, b, state, player):
     if b in ret_board:
         current_height_b = ret_board[b].h
         new_height_b = current_height_b + n
-        ret_board[b] = Piece(player, new_height_b)
+        ret_board[b] = Piece(state.to_move, new_height_b)
     else:  # loc b has no tokens yet so we can just put our new tokens there
-        ret_board[b] = Piece(player, n)
+        ret_board[b] = Piece(state.to_move, n)
 
     # handle potential remaining tokens at loc a
     current_height_a = ret_board[a].h
@@ -411,7 +386,7 @@ def move_token(n, a, b, state, player):
         # no more tokens left at loc a
         del ret_board[a]
     else:
-        ret_board[a] = Piece(player, new_height_a)
+        ret_board[a] = Piece(state.to_move, new_height_a)
 
     # done
     return ret_board

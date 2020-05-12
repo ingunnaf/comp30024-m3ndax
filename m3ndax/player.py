@@ -1,6 +1,7 @@
 
 # Import functions from local module
 from m3ndax.game import *
+from m3ndax.game import *
 
 
 class ExamplePlayer:
@@ -59,21 +60,5 @@ class ExamplePlayer:
         """
 
         self.state = self.game.result(self.state, action)
-
-        """
-        action_type = action[0]
-
-        if action_type == BOOM:  # action is a BOOM
-            origin = action[1]
-            place_holder_state = boom(origin, self.state.board)
-
-
-        else:  # action is a MOVE
-            n = action[1]
-            loc_a = action[2]
-            loc_b = action[3]
-
-            place_holder_state = move_token(n, loc_a, loc_b, self.state.board)
-
-        # update state
-        self.state = GameState(colour, self.game.utility(self.state, self.colour), place_holder_state, action)"""
+        #print_board(self.state.board)
+        #print(self.state.to_move)
