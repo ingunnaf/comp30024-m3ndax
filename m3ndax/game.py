@@ -203,20 +203,20 @@ class Expendibots(Game):
 
         # make changes to board
         if moveType == BOOM:
-            board = boom_piece(move[1])
+            board = boom_piece(move[1], local_board)
         else:
             board = move_token(move[1], move[2], move[3], local_board)
         
         # find out whose turn it is next
         current_to_move = state.to_move
-        if current_to_move == player:
-            next_to_move = otherplayer
+        if current_to_move == self.player:
+            next_to_move = self.otherplayer
         else: 
-            next_to_move = player
+            next_to_move = self.player
 
         # calculate the utility of this new state
         newstate= GameState(next_to_move, state.utility, board, None)
-        utilval = self.utility(newstate, player)
+        utilval = self.utility(newstate, self.player)
 
         # create the final state to be returned
         returnstate = GameState(next_to_move, utilval, board, None)
@@ -233,13 +233,13 @@ class Expendibots(Game):
             if winner == player: 
                 return 100
             # if opponent has won in this state, return -100
-            elif winner == otherplayer:
+            elif winner == self.otherplayer:
                 return -100
 
         # otherwise, return # of our tokens - # of their tokens (if it is a tie, it will return 0)
         board = state.board
         ntokensleft = n_pieces(board, player)
-        nothertokensleft = n_pieces(board, otherplayer)
+        nothertokensleft = n_pieces(board, self.otherplayer)
         # returns positive value if we have more tokens left than opponent
         return nothertokensleft - ntokensleft
 
