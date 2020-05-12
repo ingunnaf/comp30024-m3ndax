@@ -176,7 +176,7 @@ class Expendibots(Game):
             # for each players tokens whose turn it is
             if board[key].col == self.player:
 
-                # one possible action is to boom the white token
+                # one possible action is to boom our token
                 boom = (BOOM, key)
                 possible_actions.append(boom)
 
@@ -280,6 +280,10 @@ def valid_move(n, a, b, state, player):
     if player == WHITE:
         otherplayer = BLACK
     else: otherplayer = WHITE
+
+    # not valid if it isn't our turn to move :-) 
+    if not (state.to_move == player):
+        return False
     
     # not valid if there is no token at a
     if a not in board:
@@ -337,6 +341,7 @@ def valid_move(n, a, b, state, player):
 
 def valid_boom(origin, state, player):
     my_board = state.board
+
 
     if origin[0] not in range(0, 8):
         print("x coordinate not in range")
