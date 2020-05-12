@@ -58,6 +58,9 @@ class ExamplePlayer:
         :return: Nothing, just updates the game state
         """
 
+        self.state = game.result(self.state, action)
+
+        """
         action_type = action[0]
 
         if action_type == BOOM:  # action is a BOOM
@@ -73,4 +76,4 @@ class ExamplePlayer:
             place_holder_state = move_token(n, loc_a, loc_b, self.state.board)
 
         # update state
-        self.state = GameState(colour, self.game.utility(self.state, self.colour), place_holder_state, action)
+        self.state = GameState(colour, self.game.utility(self.state, self.colour), place_holder_state, action)"""

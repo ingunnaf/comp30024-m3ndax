@@ -1,8 +1,8 @@
 import copy
 from collections import namedtuple
 import numpy as np
-#from m3ndax.util import print_board
-from util import print_board
+from m3ndax.util import print_board
+#from util import print_board
 
 # NamedTuple definitions
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
@@ -159,12 +159,12 @@ class Expendibots(Game):
     """ Implements the game class to model Expendibots """
 
 def __init__(self, player):
-        # Player designates the colour of the player
-        self.player = player
-        if player == WHITE:
-            otherplayer = BLACK
-        else: 
-            otherplayer = WHITE
+    # Player designates the colour of the player
+    self.player = player
+    if player == WHITE:
+        otherplayer = BLACK
+    else: 
+        otherplayer = WHITE
 
     def actions(self, state):
         """Return a list of the allowable moves at this point."""
