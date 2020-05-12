@@ -58,7 +58,7 @@ class ExamplePlayer:
         :return: Nothing, just updates the game state
         """
 
-        self.state = game.result(self.state, action)
+        self.state = self.game.result(self.state, action)
 
         """
         action_type = action[0]

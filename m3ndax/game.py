@@ -339,9 +339,7 @@ def valid_move(n, a, b, state, player):
     return True
 
 
-def valid_boom(origin, state, player):
-    my_board = state.board
-
+def valid_boom(origin, my_board):
 
     if origin[0] not in range(0, 8):
         print("x coordinate not in range")
@@ -357,7 +355,7 @@ def valid_boom(origin, state, player):
 
 
 def boom(origin, my_board):
-    if not valid_boom(origin, state, player):
+    if not valid_boom(origin, my_board):
         raise RuntimeError("Invalid Boom")
 
     else:
