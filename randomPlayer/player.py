@@ -1,6 +1,7 @@
 # Remote imports
 from collections import namedtuple
 import copy
+import random
 
 # Import functions from local module
 from m3ndax.game import *
@@ -38,11 +39,7 @@ class ExamplePlayer:
         :return: ("MOVE", n, (Xa, Ya), (Xb, Yb)) OR ("BOOM", (x, y))
         """
 
-
-        # Returns the best move to make by using the algorithm from game.py
-        # return minmax_decision(self.state, self.game)
-
-        return alpha_beta_cutoff_search(self.state, self.game, None, d=4, cutoff_test=None)
+        return random.choice(self.game.actions(self.state))
 
     def update(self, colour, action):
         """

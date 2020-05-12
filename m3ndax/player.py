@@ -1,6 +1,5 @@
 # Remote imports
 from collections import namedtuple
-import random
 
 # Import functions from local module
 from randomPlayer.game import *
@@ -41,8 +40,7 @@ class ExamplePlayer:
 
         # Returns the best move to make by using the algorithm from game.py
         # return minmax_decision(self.state, self.game)
-
-        return random.choice(self.game.actions(self.state))
+        return alpha_beta_cutoff_search(self.state, self.game, None, d=4, cutoff_test=None)
 
     def update(self, colour, action):
         """
